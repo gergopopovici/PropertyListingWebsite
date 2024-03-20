@@ -1,0 +1,23 @@
+body{
+    background-color: #a7dbe3;
+    background-image: url(hatterkep.jpg);
+    background-repeat:repeat;
+    color:white;
+}
+table {
+    border: 1px solid white;
+}
+tr:nth-child(even) td:nth-child(odd){
+    padding: 8px;
+    color:red;
+    border: 1px solid red
+}
+tr:nth-child(odd) td:nth-child(even){
+    padding: 8px;
+    color:orange;
+    border: 1px solid orange
+}
+h1,h2{
+    color: whitesmoke;
+    font-family: sans-serif;
+}

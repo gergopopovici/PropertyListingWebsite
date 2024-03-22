@@ -1,16 +1,14 @@
 body{
-    background-color: #a7dbe3;
     background-image: url(hatterkep.jpg);
     background-repeat:repeat;
-    color:white;
 }
 table {
-    border: 1px solid white;
+    border: 1px solid black;
 }
 tr:nth-child(even) td:nth-child(odd){
     padding: 8px;
-    color:red;
-    border: 1px solid red
+    color:green;
+    border: 1px solid green
 }
 tr:nth-child(odd) td:nth-child(even){
     padding: 8px;
@@ -20,4 +18,87 @@ tr:nth-child(odd) td:nth-child(even){
 h1,h2{
     color: whitesmoke;
     font-family: sans-serif;
+}
+a:hover{
+    color:purple;
+    text-decoration:none
+}
+a:visited{
+    color: white;
+    text-decoration:line-through;
+}
+a:active{
+    color:gold;
+    text-decoration:dashed
+}
+ul.elsolista{
+    color: green;
+    font-size: 20px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-style: italic;
+}
+ul.masodiklista{
+    color:blue;
+    font-size: 25px;
+    font-family: 'Times New Roman', Times, serif;
+    font-weight: bold;
+}
+.stilus{
+    text-align: center;
+    font-size: larger;
+    font-family: 'Courier New', Courier, monospace;
+    color:red
+}
+.stilus2{
+    text-align: justify;
+    font-size: large;
+}
+nav #nav-div{
+    border-radius: 30px;
+    height: 50px;
+    padding:5px;
+    border-width:5px;
+    border-color: red;
+    border-style:solid
+}
+.div-stilus{
+    border-style:dashed;
+    padding: 15px 750px 15px 15px;
+    border-top-color: orange;
+    border-right-color: black;
+    border-bottom-color: blue;
+    border-left-color: red;
+}
+.podium{
+    display:flex;
+    align-items: flex-end;
+}
+.podium .helyezes{
+    width : 130px;
+    height : 85px;
+    text-align:center;
+    transition-property: height,width;
+    transition-duration: 4s;
+    transition-delay: 2s ;
+}
+.podium .elso-helyezes{
+    background-color: goldenrod;
+}
+.podium .masodik-helyezes{
+    background-color: silver;
+}
+.podium .harmadik-helyezes{
+    background-color: #FF9033;
+}
+.podium .elso-helyezes:hover{
+    height:250px;
+    width:200px;
+}
+.podium .masodik-helyezes:hover{
+    height:220px;
+    width:180px;
+}
+.podium .harmadik-helyezes:hover{
+    height:200px;
+    width:170px;
 }

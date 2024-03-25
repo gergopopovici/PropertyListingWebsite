@@ -2,35 +2,57 @@ body{
     background-image: url(hatterkep.jpg);
     background-repeat:repeat;
 }
-table {
-    border: 1px solid black;
+
+tr:nth-child(odd) td:nth-child(odd){
+    padding: 8px;
+    background-color: red;
+}
+tr:nth-child(even) td:nth-child(even){
+    padding: 8px;
+    background-color:red;
 }
 tr:nth-child(even) td:nth-child(odd){
     padding: 8px;
-    color:green;
-    border: 1px solid green
+    background-color: violet;
 }
 tr:nth-child(odd) td:nth-child(even){
     padding: 8px;
-    color:orange;
-    border: 1px solid orange
+    background-color:violet;
 }
 h1,h2{
     color: whitesmoke;
     font-family: sans-serif;
 }
-a:hover{
-    color:purple;
+.elso-link{
+    color: blue;
     text-decoration:none
 }
-a:visited{
-    color: white;
-    text-decoration:line-through;
+.elso-link:hover{
+    text-decoration:underline;
 }
-a:active{
-    color:gold;
-    text-decoration:dashed
+.elso-link:active{
+    color:yellow;
+    text-decoration:none;
+    font-size:larger
 }
+.elso-link:visited{
+    color:purple
+}
+.masodik-link{
+    color:violet;
+    text-decoration:none;
+}
+.masodik-link:hover{
+  text-decoration:underline;
+  color:blueviolet
+}
+.masodik-link:active{
+    font-size: smaller;
+}
+.masodik-link:visited{
+    color:coral
+}
+
 ul.elsolista{
     color: green;
     font-size: 20px;
@@ -78,27 +100,41 @@ nav #nav-div{
     height : 85px;
     text-align:center;
     transition-property: height,width;
-    transition-duration: 4s;
-    transition-delay: 2s ;
 }
-.podium .elso-helyezes{
+.podium .elso-helyezes:hover,
+.podium .masodik-helyezes:hover,
+.podium .harmadik-helyezes:hover {
+    transition-delay: 2s;
+}
+.podium .elso-helyezes {
     background-color: goldenrod;
+    transition-property: height,width;
+    transition-delay: 2s;
 }
-.podium .masodik-helyezes{
+
+.podium .masodik-helyezes {
     background-color: silver;
+    transition-property: height,width;
+    transition-delay: 2s;
 }
-.podium .harmadik-helyezes{
+
+.podium .harmadik-helyezes {
     background-color: #FF9033;
+    transition-property: height,width;
+    transition-delay: 2s;
 }
-.podium .elso-helyezes:hover{
-    height:250px;
-    width:200px;
+
+.podium .elso-helyezes:hover {
+    height: 250px;
+    width: 200px;
 }
-.podium .masodik-helyezes:hover{
-    height:220px;
-    width:180px;
+
+.podium .masodik-helyezes:hover {
+    height: 220px;
+    width: 180px;
 }
-.podium .harmadik-helyezes:hover{
-    height:200px;
-    width:170px;
+
+.podium .harmadik-helyezes:hover {
+    height: 200px;
+    width: 170px;
 }

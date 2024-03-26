@@ -1,8 +1,9 @@
+/*gordulo hatterkep*/
 body{
     background-image: url(hatterkep.jpg);
     background-repeat:repeat;
 }
-
+/*sakk tabla*/
 tr:nth-child(odd) td:nth-child(odd){
     padding: 8px;
     background-color: red;
@@ -19,10 +20,12 @@ tr:nth-child(odd) td:nth-child(even){
     padding: 8px;
     background-color:violet;
 }
+/*focim alcim*/
 h1,h2{
     color: whitesmoke;
     font-family: sans-serif;
 }
+/*linkek formaja szine beallitasa*/
 .elso-link{
     color: blue;
     text-decoration:none
@@ -52,7 +55,7 @@ h1,h2{
 .masodik-link:visited{
     color:coral
 }
-
+/*sorszam nelkuli lista stilusanak beallitasa*/
 ul.elsolista{
     color: green;
     font-size: 20px;
@@ -65,6 +68,7 @@ ul.masodiklista{
     font-family: 'Times New Roman', Times, serif;
     font-weight: bold;
 }
+/*em es p elemekre hasznalt stilus class*/
 .stilus{
     text-align: center;
     font-size: larger;
@@ -75,6 +79,7 @@ ul.masodiklista{
     text-align: justify;
     font-size: large;
 }
+/*nav elemben levo div elem stilusa, kerekitett szegely*/
 nav #nav-div{
     border-radius: 30px;
     height: 50px;
@@ -83,6 +88,7 @@ nav #nav-div{
     border-color: red;
     border-style:solid
 }
+/*div stilus szaggatot vonallal*/
 .div-stilus{
     border-style:dashed;
     padding: 15px 750px 15px 15px;
@@ -91,50 +97,41 @@ nav #nav-div{
     border-bottom-color: blue;
     border-left-color: red;
 }
+/*tranzicio*/
 .podium{
     display:flex;
     align-items: flex-end;
 }
-.podium .helyezes{
+
+ .elso-helyezes {
+    background-color: goldenrod;
     width : 130px;
     height : 85px;
     text-align:center;
-    transition-property: height,width;
-}
-.podium .elso-helyezes:hover,
-.podium .masodik-helyezes:hover,
-.podium .harmadik-helyezes:hover {
-    transition-delay: 2s;
-}
-.podium .elso-helyezes {
-    background-color: goldenrod;
-    transition-property: height,width;
-    transition-delay: 2s;
 }
 
 .podium .masodik-helyezes {
     background-color: silver;
-    transition-property: height,width;
-    transition-delay: 2s;
+    width : 130px;
+    height : 85px;
+    text-align:center;
 }
 
 .podium .harmadik-helyezes {
     background-color: #FF9033;
-    transition-property: height,width;
-    transition-delay: 2s;
+    width : 130px;
+    height : 85px;
+    text-align:center;
 }
-
-.podium .elso-helyezes:hover {
+.elso-helyezes:hover {
     height: 250px;
-    width: 200px;
+    transition:2s;
 }
-
-.podium .masodik-helyezes:hover {
+.masodik-helyezes:hover {
     height: 220px;
-    width: 180px;
+    transition: 2s;
 }
-
-.podium .harmadik-helyezes:hover {
+.harmadik-helyezes:hover {
     height: 200px;
-    width: 170px;
+    transition: 2s;
 }

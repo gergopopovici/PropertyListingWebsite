@@ -2,35 +2,39 @@
 <html lang="HU">
     <head>
         <meta charset="utf-8">
+        <link rel="stylesheet" href="styles.css">
         <title>Aritmetika kérdés-válasz párosítás</title>
     </head>
     <body>
         <header>Aritmetika kérdés-válasz párosítás</header>
         <br><br>
-        <form>
+        <form class="form-osztaly">
             <div>
             <label for="felhasznalonev">Név:</label>
             <input type="text" id="felhasznalonev" name="felhasznalonev" placeholder="Lászlo" required>
             </div>
             <br>
-            <div>
-                <label for="osszeadas">Összeadás:</label>
+            <div class="checkbox-osztaly">
                 <input type="checkbox" id="osszeadas" name="osszeadas" value="osszeadas">
+                <label for="osszeadas">Összeadás</label>
+
             </div>
             <br>
-            <div>
-                <label for="kivonas">Kivonás:</label>
+            <div class="checkbox-osztaly">
                 <input type="checkbox" id="kivonas" name="kivonas" value="kivonas">
+                <label for="kivonas">Kivonás</label>
             </div>
             <br>
-            <div>
-                <label for="szorzas">Szorzás:</label>
+            <div class="checkbox-osztaly">
                 <input type="checkbox" id="szorzas" name="szorzas" value="szorzas">
+                <label for="szorzas">Szorzás</label>
+
             </div>
             <br>
-            <div>
-                <label for="kivonas">Osztás:</label>
+            <div class="checkbox-osztaly">
                 <input type="checkbox" id="osztas" name="osztas" value="osztas">
+                <label for="kivonas">Osztás</label>
+
             </div>
             <br>
             <div>

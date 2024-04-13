@@ -8,7 +8,7 @@
     <body>
         <header>Aritmetika kérdés-válasz párosítás</header>
         <br><br>
-        <form class="form-osztaly">
+        <form id="form-id">
             <div>
             <label for="felhasznalonev">Név:</label>
             <input type="text" id="felhasznalonev" name="felhasznalonev" placeholder="Lászlo" required>
@@ -33,7 +33,7 @@
             <br>
             <div class="checkbox-osztaly">
                 <input type="checkbox" id="osztas" name="osztas" value="osztas">
-                <label for="kivonas">Osztás</label>
+                <label for="osztas">Osztás</label>
 
             </div>
             <br>
@@ -43,9 +43,10 @@
             </div>
             <br>
             <div>
-                <button type="submit">Játék indítása</button>
+                <button type="submit" id="start">Játék indítása</button>
             </div>
         </form>
         <footer>Popovici Gergő-Benone<br>pgim2289<br>523<br></footer>
+        <script src="script.js"></script>
     </body>
 </html>

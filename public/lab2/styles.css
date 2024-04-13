@@ -21,6 +21,6 @@ align-items: center;
     position: relative; 
     bottom: 1px; 
 }
-.form-osztaly{
+#form-id{
     background-color: green;
 }

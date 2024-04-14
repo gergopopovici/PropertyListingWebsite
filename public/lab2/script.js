@@ -6,7 +6,7 @@ const magassagCanvas = 600;
 const nagyCanvas = document.getElementById('muveletek-canvas');
 const randomEredmenyek = [];
 let jatekIndult = false;
-let KivalasztottTeglalap = null;
+let kivalasztottTeglalap = null;
 const feladatok = [];
 const eredmenyek = [];
 const vonalak = [];
@@ -58,7 +58,7 @@ function keveres() {
 function megoldasokRajzolas() {
   const canvas = nagyCanvas.getContext('2d');
   canvas.clearRect(balCanvasMeret, 0, jobbCanvasMeret, magassagCanvas);
-  if (KivalasztottTeglalap == null) {
+  if (kivalasztottTeglalap == null) {
     keveres();
   }
   for (let i = 0; i < form.kerdesek.value; ++i) {
@@ -82,19 +82,19 @@ function FeladatValasztas(event) {
     canvas.fillStyle = 'white';
     canvas.font = '20px Times New Roman';
     canvas.fillText(feladatok[kivalasztott], 20, kivalasztott * 50 + 40);
-    KivalasztottTeglalap = kivalasztott;
+    kivalasztottTeglalap = kivalasztott;
   }
 }
 function MegoldasValasztas(event) {
   if (event.offsetX >= balCanvasMeret) {
     const canvas = nagyCanvas.getContext('2d');
-    if (KivalasztottTeglalap != null) {
+    if (kivalasztottTeglalap != null) {
       const x1 = balCanvasMeret - 20;
-      const y1 = KivalasztottTeglalap * 50 + 40;
+      const y1 = kivalasztottTeglalap * 50 + 40;
       const x2 = balCanvasMeret + 110;
       const y2 = event.offsetY;
       vonalak.push({ x1, y1, x2, y2 });
-      if (randomEredmenyek[Math.floor(y2 / 50)] === eredmenyek[KivalasztottTeglalap]) {
+      if (randomEredmenyek[Math.floor(y2 / 50)] === eredmenyek[kivalasztottTeglalap]) {
         helyesVonalak.push({ x1, y1, x2, y2 });
       }
       feladatokRajzolas();
@@ -177,7 +177,10 @@ function jatek(event) {
     nagyCanvas.getContext('2d').clearRect(0, 0, nagyCanvas.width, nagyCanvas.height);
     feladatok.length = 0;
     eredmenyek.length = 0;
+    randomEredmenyek.length = 0;
     vonalak.length = 0;
+    helyesVonalak.length = 0;
+    kivalasztottTeglalap = null;
     jatekIndult = false;
   }
 }

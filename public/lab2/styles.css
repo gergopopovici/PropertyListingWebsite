@@ -1,26 +1,36 @@
-header,footer{
-    color:whitesmoke;
-    font-size: large;
-    font-weight: bold;
-    font-style:italic;
-    font-family: sans-serif
+header,
+footer {
+  color: whitesmoke;
+  font-size: large;
+  font-weight: bold;
+  font-style: italic;
+  font-family: sans-serif;
 }
-body{
-    background-image: url("img.jpg");
-    background-repeat: no-repeat;
+body {
+  background-image: url('img.jpg');
+  background-repeat: repeat;
 }
-.checkbox-osztaly{
-display: flex;
-align-items: center;
+.checkbox-osztaly {
+  display: flex;
+  align-items: center;
 }
-.checkbox-osztaly label{
-    display: block;
+.checkbox-osztaly label {
+  display: block;
 }
-.checkbox-osztaly input[type=checkbox]{
-    vertical-align: middle; 
-    position: relative; 
-    bottom: 1px; 
+.checkbox-osztaly input[type='checkbox'] {
+  vertical-align: middle;
+  position: relative;
+  bottom: 1px;
 }
-#form-id{
-    background-color: green;
+#form-id {
+  background-color: green;
+}
+.canvas-feladatok {
+  color: whitesmoke;
+  display: flex;
+  justify-content: space-around;
+  margin-top: 20px;
+}
+canvas {
+  border: 1px solid whitesmoke;
 }

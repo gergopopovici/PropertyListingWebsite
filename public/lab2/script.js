@@ -1,17 +1,75 @@
 const form = document.getElementById('form-id');
 const startButton = document.getElementById('start');
+const feladatokCanvas = document.getElementById('muveletek-canvas');
+const eredmenyekCanvas = document.getElementById('eredmenyek-canvas');
+const randomEredmenyek = [];
 let jatekIndult = false;
+const feladatok = [];
+const eredmenyek = [];
 
 function feladatokGeneralasa(muveletek) {
-  const feladatok = [];
   for (let i = 0; i < form.kerdesek.value; ++i) {
-    let randomMuvelet = Math.random() * muveletek;
-    randomMuvelet = muveletek[randomMuvelet];
-    const szam1 = Math.floor(Math.random() * 100) + 1;
-    const szam2 = Math.floor(Math.random() * 100) + 1;
-    feladatok.push(`${szam1} ${muveletek[randomMuvelet]} ${szam2}`);
+    const randomMuvelet = Math.random() * muveletek.length;
+    const szam1 = Math.floor(Math.random() * 100);
+    const szam2 = Math.floor(Math.random() * 100);
+    feladatok.push(`${szam1} ${muveletek[Math.floor(randomMuvelet)]} ${szam2}`);
+    if (muveletek[Math.floor(randomMuvelet)] === '+') {
+      eredmenyek.push(`${szam1 + szam2}`);
+      randomEredmenyek.push(`${szam1 + szam2}`);
+    } else if (muveletek[Math.floor(randomMuvelet)] === '-') {
+      eredmenyek.push(`${szam1 - szam2}`);
+      randomEredmenyek.push(`${szam1 - szam2}`);
+    } else if (muveletek[Math.floor(randomMuvelet)] === '*') {
+      eredmenyek.push(`${szam1 * szam2}`);
+      randomEredmenyek.push(`${szam1 * szam2}`);
+    } else if (muveletek[Math.floor(randomMuvelet)] === '/') {
+      eredmenyek.push(`${szam1 / szam2}`);
+      randomEredmenyek.push(`${szam1 / szam2}`);
+    }
   }
-  return feladatok;
+}
+function feladatokRajzolas() {
+  const canvas = feladatokCanvas.getContext('2d');
+  canvas.clearRect(0, 0, feladatokCanvas.width, feladatokCanvas.height);
+  for (let i = 0; i < form.kerdesek.value; ++i) {
+    const x = 10;
+    const y = i * 50 + 20;
+    canvas.fillStyle = 'red';
+    canvas.fillRect(x, y, feladatokCanvas.width - 20, 30);
+    canvas.fillStyle = 'white';
+    canvas.font = '20px Times New Roman';
+    canvas.fillText(feladatok[i], x + 10, y + 20);
+  }
+}
+function keveres() {
+  let currentIndex = randomEredmenyek.length;
+
+  while (currentIndex !== 0) {
+    const randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex--;
+    [randomEredmenyek[currentIndex], randomEredmenyek[randomIndex]] = [
+      randomEredmenyek[randomIndex],
+      randomEredmenyek[currentIndex],
+    ];
+  }
+}
+function megoldasokRajzolas() {
+  const canvas = eredmenyekCanvas.getContext('2d');
+  canvas.clearRect(0, 0, eredmenyekCanvas.width, eredmenyekCanvas.height);
+  keveres();
+  for (let i = 0; i < form.kerdesek.value; ++i) {
+    console.log(eredmenyek[i]);
+    console.log(randomEredmenyek[i]);
+  }
+  for (let i = 0; i < form.kerdesek.value; ++i) {
+    const x = 10;
+    const y = i * 50 + 20;
+    canvas.fillStyle = 'green';
+    canvas.fillRect(x, y, eredmenyekCanvas.width - 20, 30);
+    canvas.fillStyle = 'red';
+    canvas.font = '20px Times New Roman';
+    canvas.fillText(randomEredmenyek[i], x + 10, y + 20);
+  }
 }
 function jatek(event) {
   event.preventDefault();
@@ -36,7 +94,9 @@ function jatek(event) {
     if (form.osztas.checked) {
       muveletek.push('/');
     }
-    const feladatok = feladatokGeneralasa(muveletek, form);
+    feladatokGeneralasa(muveletek);
+    feladatokRajzolas();
+    megoldasokRajzolas();
   } else {
     form.felhasznalonev.disabled = false;
     form.osszeadas.disabled = false;
@@ -49,6 +109,9 @@ function jatek(event) {
     form.szorzas.checked = false;
     form.osztas.checked = false;
     form.kerdesek.value = 5;
+    eredmenyekCanvas.getContext('2d').clearRect(0, 0, eredmenyekCanvas.width, eredmenyekCanvas.height);
+    feladatokCanvas.getContext('2d').clearRect(0, 0, feladatokCanvas.width, feladatokCanvas.height);
+
     jatekIndult = false;
   }
 }

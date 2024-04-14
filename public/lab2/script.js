@@ -1,11 +1,16 @@
 const form = document.getElementById('form-id');
 const startButton = document.getElementById('start');
-const feladatokCanvas = document.getElementById('muveletek-canvas');
-const eredmenyekCanvas = document.getElementById('eredmenyek-canvas');
+const balCanvas = 400;
+const jobbCanvas = 400;
+const magassagCanvas = 600;
+const nagyCanvas = document.getElementById('muveletek-canvas');
 const randomEredmenyek = [];
 let jatekIndult = false;
+let KivalasztottTeglalap = null;
 const feladatok = [];
 const eredmenyek = [];
+const vonalak = [];
+const helyesVonalak = [];
 
 function feladatokGeneralasa(muveletek) {
   for (let i = 0; i < form.kerdesek.value; ++i) {
@@ -29,48 +34,94 @@ function feladatokGeneralasa(muveletek) {
   }
 }
 function feladatokRajzolas() {
-  const canvas = feladatokCanvas.getContext('2d');
-  canvas.clearRect(0, 0, feladatokCanvas.width, feladatokCanvas.height);
+  const canvas = nagyCanvas.getContext('2d');
+  canvas.clearRect(0, 0, balCanvas, magassagCanvas);
   for (let i = 0; i < form.kerdesek.value; ++i) {
     const x = 10;
     const y = i * 50 + 20;
     canvas.fillStyle = 'red';
-    canvas.fillRect(x, y, feladatokCanvas.width - 20, 30);
+    canvas.fillRect(x, y, balCanvas - 20, 30);
     canvas.fillStyle = 'white';
     canvas.font = '20px Times New Roman';
     canvas.fillText(feladatok[i], x + 10, y + 20);
   }
 }
 function keveres() {
-  let currentIndex = randomEredmenyek.length;
+  let index = randomEredmenyek.length;
 
-  while (currentIndex !== 0) {
-    const randomIndex = Math.floor(Math.random() * currentIndex);
-    currentIndex--;
-    [randomEredmenyek[currentIndex], randomEredmenyek[randomIndex]] = [
-      randomEredmenyek[randomIndex],
-      randomEredmenyek[currentIndex],
-    ];
+  while (index !== 0) {
+    const randomIndex = Math.floor(Math.random() * index);
+    index--;
+    [randomEredmenyek[index], randomEredmenyek[randomIndex]] = [randomEredmenyek[randomIndex], randomEredmenyek[index]];
   }
 }
 function megoldasokRajzolas() {
-  const canvas = eredmenyekCanvas.getContext('2d');
-  canvas.clearRect(0, 0, eredmenyekCanvas.width, eredmenyekCanvas.height);
-  keveres();
-  for (let i = 0; i < form.kerdesek.value; ++i) {
-    console.log(eredmenyek[i]);
-    console.log(randomEredmenyek[i]);
+  const canvas = nagyCanvas.getContext('2d');
+  canvas.clearRect(balCanvas, 0, jobbCanvas, magassagCanvas);
+  if (KivalasztottTeglalap == null) {
+    keveres();
   }
   for (let i = 0; i < form.kerdesek.value; ++i) {
-    const x = 10;
+    const x = balCanvas + 10;
     const y = i * 50 + 20;
     canvas.fillStyle = 'green';
-    canvas.fillRect(x, y, eredmenyekCanvas.width - 20, 30);
+    canvas.fillRect(x, y, jobbCanvas - 20, 30);
     canvas.fillStyle = 'red';
     canvas.font = '20px Times New Roman';
     canvas.fillText(randomEredmenyek[i], x + 10, y + 20);
   }
 }
+function FeladatValasztas(event) {
+  if (event.offsetX < balCanvas) {
+    const canvas = nagyCanvas.getContext('2d');
+    canvas.clearRect(0, 0, balCanvas, magassagCanvas);
+    const kivalasztott = Math.floor(event.offsetY / 50);
+    feladatokRajzolas();
+    canvas.fillStyle = 'blue';
+    canvas.fillRect(10, kivalasztott * 50 + 20, balCanvas - 20, 30);
+    canvas.fillStyle = 'white';
+    canvas.font = '20px Times New Roman';
+    canvas.fillText(feladatok[kivalasztott], 20, kivalasztott * 50 + 40);
+    KivalasztottTeglalap = kivalasztott;
+  }
+}
+function MegoldasValasztas(event) {
+  if (event.offsetX >= balCanvas) {
+    const canvas = nagyCanvas.getContext('2d');
+    if (KivalasztottTeglalap != null) {
+      const x1 = balCanvas - 20;
+      const y1 = KivalasztottTeglalap * 50 + 40;
+      const x2 = balCanvas + 10;
+      const y2 = event.offsetY;
+      vonalak.push({ x1, y1, x2, y2 });
+      if (randomEredmenyek[Math.floor(y2 / 50)] === eredmenyek[KivalasztottTeglalap]) {
+        helyesVonalak.push({ x1, y1, x2, y2 });
+      }
+      vonalak.forEach((vonal) => {
+        canvas.beginPath();
+        canvas.moveTo(vonal.x1, vonal.y1);
+        canvas.lineTo(vonal.x2, vonal.y2);
+        canvas.strokeStyle = 'orange';
+        canvas.lineWidth = 2;
+        canvas.stroke();
+      });
+      if (vonalak.length === parseInt(form.kerdesek.value, 10)) {
+        console.log('Minden parositas megtortent.');
+        nagyCanvas.removeEventListener('click', FeladatValasztas);
+        nagyCanvas.removeEventListener('click', MegoldasValasztas);
+        helyesVonalak.forEach((vonal) => {
+          canvas.beginPath();
+          canvas.moveTo(vonal.x1, vonal.y1);
+          canvas.lineTo(vonal.x2, vonal.y2);
+          canvas.strokeStyle = 'green';
+          canvas.lineWidth = 2;
+          canvas.stroke();
+        });
+      }
+    }
+  }
+}
+
 function jatek(event) {
   event.preventDefault();
   if (!jatekIndult) {
@@ -109,10 +160,13 @@ function jatek(event) {
     form.szorzas.checked = false;
     form.osztas.checked = false;
     form.kerdesek.value = 5;
-    eredmenyekCanvas.getContext('2d').clearRect(0, 0, eredmenyekCanvas.width, eredmenyekCanvas.height);
-    feladatokCanvas.getContext('2d').clearRect(0, 0, feladatokCanvas.width, feladatokCanvas.height);
-
+    nagyCanvas.getContext('2d').clearRect(0, 0, nagyCanvas.width, nagyCanvas.height);
+    feladatok.length = 0;
+    eredmenyek.length = 0;
+    vonalak.length = 0;
     jatekIndult = false;
   }
 }
 startButton.addEventListener('click', jatek);
+nagyCanvas.addEventListener('click', FeladatValasztas);
+nagyCanvas.addEventListener('click', MegoldasValasztas);

@@ -72,7 +72,7 @@ function megoldasokRajzolas() {
   }
 }
 function FeladatValasztas(event) {
-  if (event.offsetX < balCanvasMeret) {
+  if (event.offsetX < balCanvasMeret && event.offsetY / 50 <= form.kerdesek.value) {
     const canvas = nagyCanvas.getContext('2d');
     canvas.clearRect(0, 0, balCanvasMeret, magassagCanvas);
     const kivalasztott = Math.floor(event.offsetY / 50);
@@ -86,7 +86,7 @@ function FeladatValasztas(event) {
   }
 }
 function MegoldasValasztas(event) {
-  if (event.offsetX >= balCanvasMeret) {
+  if (event.offsetX >= balCanvasMeret && event.offsetY / 50 <= form.kerdesek.value) {
     const canvas = nagyCanvas.getContext('2d');
     if (kivalasztottTeglalap != null) {
       const x1 = balCanvasMeret - 20;

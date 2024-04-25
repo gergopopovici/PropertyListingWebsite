@@ -13,20 +13,19 @@ const vonalak = [];
 const helyesVonalak = [];
 const kivalasztottTeglalapokBal = [];
 const kivalasztottTeglalapokJobb = [];
+const befejezettTeglalapokBal = [];
+const befejezettTeglalapokJobb = [];
 
-function clickBal(teglalap, joe) {
-  if (kivalasztottTeglalapokBal.includes(teglalap)) {
+function clickBal(teglalap) {
+  if (befejezettTeglalapokBal.includes(teglalap)) {
     return -1;
   }
-  if (joe === 1) {
-    kivalasztottTeglalapokBal.push(teglalap);
-    return 1;
-  }
-  return 0;
+  kivalasztottTeglalapokBal.push(teglalap);
+  return 1;
 }
 
 function clickJobb(teglalap) {
-  if (kivalasztottTeglalapokJobb.includes(teglalap)) {
+  if (befejezettTeglalapokJobb.includes(teglalap)) {
     return -1;
   }
   kivalasztottTeglalapokJobb.push(teglalap);
@@ -96,7 +95,7 @@ function FeladatValasztas(event) {
   if (
     event.offsetX < balCanvasMeret &&
     event.offsetY / 50 <= form.kerdesek.value &&
-    clickBal(Math.floor(event.offsetY / 50), 0) === 0
+    clickBal(Math.floor(event.offsetY / 50)) === 1
   ) {
     const canvas = nagyCanvas.getContext('2d');
     canvas.clearRect(0, 0, balCanvasMeret, magassagCanvas);
@@ -111,42 +110,52 @@ function FeladatValasztas(event) {
   }
 }
 function MegoldasValasztas(event) {
-  if (event.offsetX >= balCanvasMeret && event.offsetY / 50 <= form.kerdesek.value) {
+  if (
+    event.offsetX >= balCanvasMeret &&
+    event.offsetY / 50 <= form.kerdesek.value &&
+    clickBal(kivalasztottTeglalap) === 1 &&
+    clickJobb(Math.floor(event.offsetY / 50)) === 1
+  ) {
     const canvas = nagyCanvas.getContext('2d');
     if (kivalasztottTeglalap != null) {
       const x1 = balCanvasMeret - 20;
       const y1 = kivalasztottTeglalap * 50 + 40;
       const x2 = balCanvasMeret + 110;
       const y2 = event.offsetY;
-      if (clickJobb(Math.floor(y2 / 50)) === 1 && clickBal(kivalasztottTeglalap, 1) === 1) {
-        vonalak.push({ x1, y1, x2, y2 });
-        if (randomEredmenyek[Math.floor(y2 / 50)] === eredmenyek[kivalasztottTeglalap]) {
-          helyesVonalak.push({ x1, y1, x2, y2 });
-        }
-        feladatokRajzolas();
-        megoldasokRajzolas();
-        vonalak.forEach((vonal) => {
-          canvas.beginPath();
-          canvas.moveTo(vonal.x1, vonal.y1);
-          canvas.lineTo(vonal.x2, vonal.y2);
-          canvas.strokeStyle = 'black';
-          canvas.lineWidth = 2;
-          canvas.stroke();
-        });
+      vonalak.push({ x1, y1, x2, y2 });
+      befejezettTeglalapokBal.push(kivalasztottTeglalap);
+      console.log(kivalasztottTeglalap);
+      befejezettTeglalapokJobb.push(Math.floor(event.offsetY / 50));
+      console.log(befejezettTeglalapokBal);
+      if (randomEredmenyek[Math.floor(y2 / 50)] === eredmenyek[kivalasztottTeglalap]) {
+        helyesVonalak.push({ x1, y1, x2, y2 });
       }
-      if (vonalak.length === parseInt(form.kerdesek.value, 10)) {
-        console.log('Minden parositas megtortent.');
-        nagyCanvas.removeEventListener('click', FeladatValasztas);
-        nagyCanvas.removeEventListener('click', MegoldasValasztas);
-        helyesVonalak.forEach((vonal) => {
-          canvas.beginPath();
-          canvas.moveTo(vonal.x1, vonal.y1);
-          canvas.lineTo(vonal.x2, vonal.y2);
-          canvas.strokeStyle = 'green';
-          canvas.lineWidth = 2;
-          canvas.stroke();
-        });
-      }
+      feladatokRajzolas();
+      megoldasokRajzolas();
+      vonalak.forEach((vonal) => {
+        canvas.beginPath();
+        canvas.moveTo(vonal.x1, vonal.y1);
+        canvas.lineTo(vonal.x2, vonal.y2);
+        canvas.strokeStyle = 'black';
+        canvas.lineWidth = 2;
+        canvas.stroke();
+      });
+    }
+    if (vonalak.length === parseInt(form.kerdesek.value, 10)) {
+      console.log('Minden parositas megtortent.');
+      nagyCanvas.removeEventListener('click', FeladatValasztas);
+      nagyCanvas.removeEventListener('click', MegoldasValasztas);
+      helyesVonalak.forEach((vonal) => {
+        canvas.beginPath();
+        canvas.moveTo(vonal.x1, vonal.y1);
+        canvas.lineTo(vonal.x2, vonal.y2);
+        canvas.strokeStyle = 'green';
+        canvas.lineWidth = 2;
+        canvas.stroke();
+      });
+      canvas.fillStyle = 'red';
+      canvas.font = '30px Times New Roman';
+      canvas.fillText('Jatek Vege!!', 300, 300);
     }
   }
 }
@@ -211,6 +220,8 @@ function jatek(event) {
     jatekIndult = false;
     kivalasztottTeglalapokBal.length = 0;
     kivalasztottTeglalapokJobb.length = 0;
+    befejezettTeglalapokBal.length = 0;
+    befejezettTeglalapokJobb.length = 0;
   }
 }
 startButton.addEventListener('click', jatek);

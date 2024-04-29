@@ -18,6 +18,10 @@ app.post('/submitannouncement_form', express.urlencoded({ extended: true }), (re
   res.json({ id: ujHirdetes.id });
 });
 
+app.get('/getannouncement', (req, res) => {
+  res.json(hirdetesek);
+});
+
 app.listen(3000, () => {
   console.log('Server is running on port 3000');
 });

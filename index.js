@@ -17,7 +17,6 @@ app.post('/submitannouncement_form', express.urlencoded({ extended: true }), (re
   hirdetesek.push(ujHirdetes);
   res.json({ id: ujHirdetes.id });
 });
-
 app.get('/getannouncement', (req, res) => {
   res.json(hirdetesek);
 });

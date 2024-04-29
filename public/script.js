@@ -90,6 +90,28 @@ function checkFormHirdet() {
 
   return true;
 }
+
+function hirdetesek() {
+  fetch('/getannouncement')
+    .then((res) => res.json())
+    .then((data) => {
+      const nagyDiv = document.getElementById('nagy-div');
+      nagyDiv.innerText = '';
+      data.forEach((hirdetes) => {
+        const hirdetesDiv = document.createElement('div');
+        hirdetesDiv.classList.add('hirdetes');
+        hirdetesDiv.innerHTML = `
+          <h2>${hirdetes.varos} ${hirdetes.kerulet}</h2>
+          <p>Felszínterület: ${hirdetes.felszinterulet} m^2</p>
+          <p>Ár: ${hirdetes.ar} RON</p>
+          <p>Szobák száma: ${hirdetes.szobak}</p>
+          <p>Dátum: ${hirdetes.datum}</p>
+        `;
+        nagyDiv.appendChild(hirdetesDiv);
+      });
+    });
+}
+
 const clearButton = document.getElementById('clear');
 const clearKepButton = document.getElementById('clear-kep');
 const clearHirdetButton = document.getElementById('clear-hirdet');
@@ -114,4 +136,7 @@ if (submitButtonKep) {
 }
 if (submitButtonHirdet) {
   submitButtonHirdet.addEventListener('click', checkFormHirdet);
+}
+if (clearButton) {
+  hirdetesek();
 }

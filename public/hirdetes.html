@@ -12,20 +12,22 @@
             <a href="kepfeltolt.html">Kép feltöltése</a>
         </nav>
         <div class="hirdetes">
-            <label for="varos">Város:</label>
-            <input type="text" id="varos" name="varos" placeholder="Kolozsvár">
-            <label for="kerulet">Kerület:</label>
-            <input type="text" id="kerulet" name="kerulet" placeholder="Marasti">
-            <label for="felszinterulet">Felszinterület:</label>
-            <input type="number" id="felszinterulet" name="felszinterulet" placeholder="Felszinterület">
-            <label for="ar">Ár:</label>
-            <input type="text" id="ar" name="ar" placeholder="Ár">
-            <label for="szobak">Szobák száma:</label>
-            <input type="number" id="szobak" name="szobak" placeholder="Szobák száma">
-            <label for="date">Dátum:</label>
-            <input type="date" id="datum" name="date">
-            <button type="submit" id="hirdet">Hirdetés</button>
-            <button type="button" id="clear-hirdet">Törlés</button>
+            <form action="submitannouncement_form" method="POST" >
+                <label for="varos">Város:</label>
+                <input type="text" id="varos" name="varos" placeholder="Kolozsvár">
+                <label for="kerulet">Kerület:</label>
+                <input type="text" id="kerulet" name="kerulet" placeholder="Marasti">
+                <label for="felszinterulet">Felszinterület:</label>
+                <input type="number" id="felszinterulet" name="felszinterulet" placeholder="Felszinterület">
+                <label for="ar">Ár:</label>
+                <input type="text" id="ar" name="ar" placeholder="Ár">
+                <label for="szobak">Szobák száma:</label>
+                <input type="number" id="szobak" name="szobak" placeholder="Szobák száma">
+                <label for="date">Dátum:</label>
+                <input type="date" id="datum" name="date">
+                <button type="submit" id="hirdet">Hirdetés</button>
+                <button type="button" id="clear-hirdet">Törlés</button>
+            </form>
         </div>
         <footer>Popovici Gergo-Benone <br> pgim2289 <br >523 <br> </footer>
         <script src="script.js"></script>

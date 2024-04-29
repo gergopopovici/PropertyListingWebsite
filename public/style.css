@@ -1,3 +1,41 @@
-h1 {
-  color: gray;
+.kereso {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  background-color: #f8f9fa;
+}
+.kereso input,
+.kereso button {
+  margin-right: 10px;
+}
+nav {
+  background-color: #f5deb3;
+  padding: 10px;
+  border-radius: 10px;
+  display: flex;
+  justify-content: space-around;
+}
+nav a {
+  background-color: red;
+  color: white;
+  padding: 14px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  border-radius: 10px;
+  transition: background-color 0.3s;
+}
+nav a:hover {
+  background-color: #ff6347;
+}
+nav a:visited {
+  text-decoration: none;
+  color: white;
+}
+.logo {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+  background-color: green;
 }

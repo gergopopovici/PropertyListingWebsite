@@ -1,10 +1,21 @@
 import express from 'express';
 
 const app = express();
-
+const hirdetesek = [];
 app.use(express.static(`${process.cwd()}/public`));
-app.post('/submit_form', (req, res) => {
-  res.send('Form submitted');
+app.post('/submitannouncement_form', express.urlencoded({ extended: true }), (req, res) => {
+  const { varos, kerulet, felszinterulet, ar, szobak, datum } = req.body;
+  const ujHirdetes = {
+    id: hirdetesek.length + 1,
+    varos,
+    kerulet,
+    felszinterulet,
+    ar,
+    szobak,
+    datum,
+  };
+  hirdetesek.push(ujHirdetes);
+  res.json({ id: ujHirdetes.id });
 });
 
 app.listen(3000, () => {

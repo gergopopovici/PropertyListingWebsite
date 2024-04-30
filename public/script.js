@@ -29,7 +29,11 @@ function checkFormIndex() {
     alert('A város neve nem lehet szám!');
     return false;
   }
-  if (minar !== '' && maxar !== '' && parseInt(minar, 10) > parseInt(maxar, 10)) {
+  if (/[^0-9]/.test(minar) || /[^0-9]/.test(maxar)) {
+    alert('Az ár csak szám lehet!');
+    return false;
+  }
+  if (parseInt(minar, 10) > parseInt(maxar, 10)) {
     alert('A minimum ár nem lehet nagyobb a maximum árnál!');
     return false;
   }
@@ -43,6 +47,10 @@ function checkFormIndex() {
 function checkFormKep() {
   const adId = document.getElementById('adId').value;
   const image = document.getElementById('kep').value;
+  if (/[^0-9]/.test(adId)) {
+    alert('Az azonosító csak szám lehet!');
+    return false;
+  }
   if (adId === '') {
     alert('Adja meg a hirdetés azonosítóját!');
     return false;
@@ -84,16 +92,32 @@ function checkFormHirdet() {
     alert('A felszínterület nem lehet kevesebb mint 10m^2!');
     return false;
   }
+  if (/[^0-9]/.test(felszinterulet)) {
+    alert('A felszínterület csak szám lehet!');
+    return false;
+  }
   if (ar < 0) {
     alert('Az ár nem lehet negatív szám!');
+    return false;
+  }
+  if (/[^0-9]/.test(ar)) {
+    alert('Az ár csak szám lehet!');
     return false;
   }
   if (szobak < 0) {
     alert('A szobák száma nem lehet negatív szám!');
     return false;
   }
+  if (/[^0-9]/.test(szobak)) {
+    alert('A szobák száma csak szám lehet!');
+    return false;
+  }
   if (datum === '') {
     alert('Adja meg a hirdetés dátumát!');
+    return false;
+  }
+  if (new Date(datum) > new Date()) {
+    alert('A dátum nem lehet a jövőben!');
     return false;
   }
   return true;
@@ -120,6 +144,7 @@ function hirdetesekMegjelenitese() {
           .then((kepek) => {
             kepek.forEach((kep) => {
               const kepHirdetes = document.createElement('img');
+              kepHirdetes.classList.add('kepek');
               kepHirdetes.src = `/uploads/${kep.image.filename}`;
               kepHirdetes.alt = 'Hirdetés kép';
               hirdetesDiv.appendChild(kepHirdetes);
@@ -130,6 +155,38 @@ function hirdetesekMegjelenitese() {
     });
 }
 
+function hirdetesKeresese() {
+  fetch('/getfiltered')
+    .then((res) => res.json())
+    .then((filterhirdetesek) => {
+      console.log(filterhirdetesek);
+      const nagyDiv = document.getElementById('nagy-div');
+      nagyDiv.innerText = '';
+      filterhirdetesek.forEach((hirdetes) => {
+        const hirdetesDiv = document.createElement('div');
+        // hirdetesDiv.classList.add('hirdetes');
+        hirdetesDiv.innerText = `
+          ${hirdetes.varos} ${hirdetes.kerulet}
+          Felszínterület: ${hirdetes.felszinterulet} m^2
+          Ár: ${hirdetes.ar} RON
+          Szobák száma: ${hirdetes.szobak}
+          Dátum: ${hirdetes.datum}
+        `;
+        fetch(`/getimage?adId=${hirdetes.id}`)
+          .then((res) => res.json())
+          .then((kepek) => {
+            kepek.forEach((kep) => {
+              const kepHirdetes = document.createElement('img');
+              kepHirdetes.classList.add('kepek');
+              kepHirdetes.src = `/uploads/${kep.image.filename}`;
+              kepHirdetes.alt = 'Hirdetés kép';
+              hirdetesDiv.appendChild(kepHirdetes);
+            });
+          });
+        nagyDiv.appendChild(hirdetesDiv);
+      });
+    });
+}
 const clearButton = document.getElementById('clear');
 const clearKepButton = document.getElementById('clear-kep');
 const clearHirdetButton = document.getElementById('clear-hirdet');
@@ -139,6 +196,7 @@ const submitButtonHirdet = document.getElementById('hirdet');
 
 if (clearButton) {
   clearButton.addEventListener('click', clearIndex);
+  clearButton.addEventListener('click', hirdetesekMegjelenitese);
 }
 if (clearKepButton) {
   clearKepButton.addEventListener('click', clearKep);
@@ -146,10 +204,20 @@ if (clearKepButton) {
 if (clearHirdetButton) {
   clearHirdetButton.addEventListener('click', clearHirdet);
 }
+
+if (submitButtonIndex) {
+  hirdetesekMegjelenitese();
+}
+
 if (submitButtonIndex) {
   submitButtonIndex.addEventListener('click', (event) => {
     if (!checkFormIndex()) {
       event.preventDefault();
+    } else {
+      //  hirdetesKeresese().then(() => {
+      //    window.location.href = 'kereses.html';
+      // });
+      hirdetesKeresese();
     }
   });
 }
@@ -168,8 +236,4 @@ if (submitButtonHirdet) {
       event.preventDefault();
     }
   });
-}
-
-if (clearButton) {
-  hirdetesekMegjelenitese();
 }

@@ -25,6 +25,10 @@ function checkFormIndex() {
     alert('Adja meg a kereset város nevét!');
     return false;
   }
+  if (/[^a-zA-Z]/.test(varos)) {
+    alert('A város neve nem lehet szám!');
+    return false;
+  }
   if (minar !== '' && maxar !== '' && parseInt(minar, 10) > parseInt(maxar, 10)) {
     alert('A minimum ár nem lehet nagyobb a maximum árnál!');
     return false;
@@ -67,6 +71,11 @@ function checkFormHirdet() {
     alert('Adja meg a város nevét!');
     return false;
   }
+  if (/[^a-zA-Z]/.test(varos)) {
+    alert('A város neve nem lehet szám!');
+    return false;
+  }
+
   if (kerulet === '') {
     alert('Adja meg a kerületet!');
     return false;
@@ -87,26 +96,35 @@ function checkFormHirdet() {
     alert('Adja meg a hirdetés dátumát!');
     return false;
   }
-
   return true;
 }
 
-function hirdetesek() {
+function hirdetesekMegjelenitese() {
   fetch('/getannouncement')
     .then((res) => res.json())
-    .then((data) => {
+    .then((hirdetesek) => {
       const nagyDiv = document.getElementById('nagy-div');
       nagyDiv.innerText = '';
-      data.forEach((hirdetes) => {
+      hirdetesek.forEach((hirdetes) => {
         const hirdetesDiv = document.createElement('div');
-        hirdetesDiv.classList.add('hirdetes');
-        hirdetesDiv.innerHTML = `
-          <h2>${hirdetes.varos} ${hirdetes.kerulet}</h2>
-          <p>Felszínterület: ${hirdetes.felszinterulet} m^2</p>
-          <p>Ár: ${hirdetes.ar} RON</p>
-          <p>Szobák száma: ${hirdetes.szobak}</p>
-          <p>Dátum: ${hirdetes.datum}</p>
+        // hirdetesDiv.classList.add('hirdetes');
+        hirdetesDiv.innerText = `
+          ${hirdetes.varos} ${hirdetes.kerulet}
+          Felszínterület: ${hirdetes.felszinterulet} m^2
+          Ár: ${hirdetes.ar} RON
+          Szobák száma: ${hirdetes.szobak}
+          Dátum: ${hirdetes.datum}
         `;
+        fetch(`/getimage?adId=${hirdetes.id}`)
+          .then((res) => res.json())
+          .then((kepek) => {
+            kepek.forEach((kep) => {
+              const kepHirdetes = document.createElement('img');
+              kepHirdetes.src = `/uploads/${kep.image.filename}`;
+              kepHirdetes.alt = 'Hirdetés kép';
+              hirdetesDiv.appendChild(kepHirdetes);
+            });
+          });
         nagyDiv.appendChild(hirdetesDiv);
       });
     });
@@ -129,14 +147,29 @@ if (clearHirdetButton) {
   clearHirdetButton.addEventListener('click', clearHirdet);
 }
 if (submitButtonIndex) {
-  submitButtonIndex.addEventListener('click', checkFormIndex);
+  submitButtonIndex.addEventListener('click', (event) => {
+    if (!checkFormIndex()) {
+      event.preventDefault();
+    }
+  });
 }
+
 if (submitButtonKep) {
-  submitButtonKep.addEventListener('click', checkFormKep);
+  submitButtonKep.addEventListener('click', (event) => {
+    if (!checkFormKep()) {
+      event.preventDefault();
+    }
+  });
 }
+
 if (submitButtonHirdet) {
-  submitButtonHirdet.addEventListener('click', checkFormHirdet);
+  submitButtonHirdet.addEventListener('click', (event) => {
+    if (!checkFormHirdet()) {
+      event.preventDefault();
+    }
+  });
 }
+
 if (clearButton) {
-  hirdetesek();
+  hirdetesekMegjelenitese();
 }

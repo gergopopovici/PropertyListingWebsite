@@ -12,11 +12,11 @@
             <a href="hirdetes.html">Hirdetés</a>
         </nav>
         <div class="kepfeltolt">
-            <form action="submitpic_form" method="POST" >
+            <form action="submitpic_form" method="POST" enctype="multipart/form-data" >
                 <label for="adId">Hirdetés ID:</label>
-                <input type="text" id="adId" name="adId" placeholder="Hirdetés ID">
-                <label for="image">Kép:</label>
-                <input type="file" id="kep" name="image">
+                <input type="number" id="adId" name="adId" placeholder="Hirdetés ID">
+                <label for="kep">Kép:</label>
+                <input type="file" id="kep" name="kep">
                 <button type="submit" id="feltolt">Kép feltöltése</button>
                 <button type="button" id="clear-kep">Törlés</button>
             </form>

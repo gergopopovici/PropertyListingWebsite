@@ -62,7 +62,6 @@ app.get('/getimage', (req, res) => {
 });
 app.get('/getfiltered', (req, res) => {
   res.json(filterHirdetesek);
-  console.log(filterHirdetesek);
 });
 app.listen(3000, () => {
   console.log('Server is running on port 3000');

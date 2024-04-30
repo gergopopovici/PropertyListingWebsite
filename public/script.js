@@ -131,7 +131,6 @@ function hirdetesekMegjelenitese() {
       nagyDiv.innerText = '';
       hirdetesek.forEach((hirdetes) => {
         const hirdetesDiv = document.createElement('div');
-        // hirdetesDiv.classList.add('hirdetes');
         hirdetesDiv.innerText = `
           ${hirdetes.varos} ${hirdetes.kerulet}
           Felszínterület: ${hirdetes.felszinterulet} m^2
@@ -164,7 +163,6 @@ function hirdetesKeresese() {
       nagyDiv.innerText = '';
       filterhirdetesek.forEach((hirdetes) => {
         const hirdetesDiv = document.createElement('div');
-        // hirdetesDiv.classList.add('hirdetes');
         hirdetesDiv.innerText = `
           ${hirdetes.varos} ${hirdetes.kerulet}
           Felszínterület: ${hirdetes.felszinterulet} m^2
@@ -214,9 +212,6 @@ if (submitButtonIndex) {
     if (!checkFormIndex()) {
       event.preventDefault();
     } else {
-      //  hirdetesKeresese().then(() => {
-      //    window.location.href = 'kereses.html';
-      // });
       hirdetesKeresese();
     }
   });

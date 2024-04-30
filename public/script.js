@@ -158,7 +158,6 @@ function hirdetesKeresese() {
   fetch('/getfiltered')
     .then((res) => res.json())
     .then((filterhirdetesek) => {
-      console.log(filterhirdetesek);
       const nagyDiv = document.getElementById('nagy-div');
       nagyDiv.innerText = '';
       filterhirdetesek.forEach((hirdetes) => {

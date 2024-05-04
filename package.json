@@ -8,13 +8,12 @@
     "eslint-config-prettier": "8.8.0",
     "eslint-plugin-import": "2.27.5",
     "eslint-plugin-prettier": "4.2.1",
-    "fs": "^0.0.1-security",
     "html-validate": "8.9.1",
-    "path": "^0.12.7",
     "prettier": "2.8.7"
   },
   "dependencies": {
     "express": "^4.19.2",
+    "express-validator": "^7.0.1",
     "multer": "^1.4.5-lts.1"
   }
 }

@@ -138,7 +138,7 @@ function hirdetesekMegjelenitese() {
           Szobák száma: ${hirdetes.szobak}
           Dátum: ${hirdetes.datum}
         `;
-        fetch(`/getimage?adId=${hirdetes.id}`)
+        fetch(`/getimages?adId=${hirdetes.id}`)
           .then((res) => res.json())
           .then((kepek) => {
             kepek.forEach((kep) => {
@@ -155,7 +155,7 @@ function hirdetesekMegjelenitese() {
 }
 
 function hirdetesKeresese() {
-  fetch('/getfiltered')
+  fetch('/submit_form')
     .then((res) => res.json())
     .then((filterhirdetesek) => {
       const nagyDiv = document.getElementById('nagy-div');
@@ -169,7 +169,7 @@ function hirdetesKeresese() {
           Szobák száma: ${hirdetes.szobak}
           Dátum: ${hirdetes.datum}
         `;
-        fetch(`/getimage?adId=${hirdetes.id}`)
+        fetch(`/getimages?adId=${hirdetes.id}`)
           .then((res) => res.json())
           .then((kepek) => {
             kepek.forEach((kep) => {

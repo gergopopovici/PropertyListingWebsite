@@ -3,6 +3,7 @@ import multer from 'multer';
 import path from 'path';
 import { check, validationResult } from 'express-validator';
 import fs, { existsSync, mkdirSync } from 'fs';
+import requestRoutes from './routes/requests.js';
 
 const app = express();
 const uploadDir = path.join(process.cwd(), 'uploadDir');
@@ -84,6 +85,9 @@ app.get('/getimages', (req, res) => {
   const image = uploadedImages.filter((img) => Number(img.adId) === Number(adId));
   res.json(image);
 });
+app.set('view engine', 'ejs');
+app.use('/requests', requestRoutes);
+
 app.listen(3000, () => {
   console.log('Server is running on port 3000');
 });

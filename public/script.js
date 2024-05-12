@@ -154,6 +154,22 @@ function hirdetesekMegjelenitese() {
     });
 }
 
+async function felhasznalokMegjelenitese() {
+  try {
+    const response = await fetch('/requests/felhasznalok');
+    const felhasznalok = await response.json();
+    const select = document.getElementById('felhasznalo');
+    felhasznalok.forEach((felhasznalo) => {
+      const opcio = document.createElement('opcio');
+      opcio.value = felhasznalo.FelhasznaloID;
+      opcio.text = felhasznalo.Nev;
+      select.appendChild(opcio);
+    });
+  } catch (error) {
+    console.error('Hiba történt:', error);
+  }
+}
+
 function hirdetesKeresese() {
   fetch('/submit_form')
     .then((res) => res.json())
@@ -230,4 +246,8 @@ if (submitButtonHirdet) {
       event.preventDefault();
     }
   });
+}
+
+if (submitButtonIndex) {
+  felhasznalokMegjelenitese();
 }

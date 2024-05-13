@@ -1,24 +1,25 @@
 import express from 'express';
-import multer from 'multer';
+import { engine } from 'express-handlebars';
+// import multer from 'multer';
 import path from 'path';
-import { check, validationResult } from 'express-validator';
-import fs, { existsSync, mkdirSync } from 'fs';
+// import { check, validationResult } from 'express-validator';
+// import fs, { existsSync, mkdirSync } from 'fs';
 import requestRoutes from './routes/requests.js';
 
 const app = express();
 const uploadDir = path.join(process.cwd(), 'uploadDir');
-if (!existsSync(uploadDir)) {
-  mkdirSync(uploadDir);
-}
-const hirdetesek = [];
+// if (!existsSync(uploadDir)) {
+//  mkdirSync(uploadDir);
+// }
+/* const hirdetesek = [];
 const uploadedImages = [];
-let filterHirdetesek = [];
+let filterHirdetesek = []; */
 app.use(express.static(`${process.cwd()}/public`));
 app.use('/uploads', express.static(uploadDir));
-const mutlerUpload = multer({ dest: uploadDir, limits: { fileSize: 5000000 } });
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.post(
+// const mutlerUpload = multer({ dest: uploadDir, limits: { fileSize: 5000000 } });
+// app.use(express.json());
+// app.use(express.urlencoded({ extended: true }));
+/* app.post(
   '/submitannouncement_form',
   [
     check('varos').isString().isLength({ min: 1 }).withMessage('Város megadása kötelező!'),
@@ -84,9 +85,22 @@ app.get('/getimages', (req, res) => {
   const { adId } = req.query;
   const image = uploadedImages.filter((img) => Number(img.adId) === Number(adId));
   res.json(image);
-});
-app.set('view engine', 'ejs');
-app.use('/requests', requestRoutes);
+}); */
+app.set('view engine', 'hbs');
+app.set('views', path.join(process.cwd(), 'views'));
+app.engine(
+  'hbs',
+  engine({
+    extname: 'hbs',
+    defaultView: 'main',
+    layoutsDir: path.join(process.cwd(), 'views/layouts'),
+    partialsDir: path.join(process.cwd(), 'views/partials'),
+  }),
+);
+/* app.get('/', (req, res) => {
+  res.render('index', { aboutme: 'geci' });
+}); */
+app.use('/', requestRoutes);
 
 app.listen(3000, () => {
   console.log('Server is running on port 3000');

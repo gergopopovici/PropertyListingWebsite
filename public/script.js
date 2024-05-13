@@ -157,12 +157,18 @@ function hirdetesekMegjelenitese() {
 async function felhasznalokMegjelenitese() {
   try {
     const response = await fetch('/requests/felhasznalok');
-    const felhasznalok = await response.json();
+    const data = await response.json();
     const select = document.getElementById('felhasznalo');
-    felhasznalok.forEach((felhasznalo) => {
-      const opcio = document.createElement('opcio');
+    console.log(select); // Log the select element
+    console.log(data); // Log the data
+    data.Felhasznalok.forEach((felhasznalo) => {
+      // Use data.forEach instead of data.Felhasznalok.forEach
+      console.log(felhasznalo);
+      const opcio = document.createElement('option');
       opcio.value = felhasznalo.FelhasznaloID;
+      console.log(opcio.value); // Log the value
       opcio.text = felhasznalo.Nev;
+      console.log(opcio.text); // Log the text
       select.appendChild(opcio);
     });
   } catch (error) {
@@ -207,10 +213,10 @@ const submitButtonIndex = document.getElementById('keres');
 const submitButtonKep = document.getElementById('feltolt');
 const submitButtonHirdet = document.getElementById('hirdet');
 
-if (clearButton) {
+/* if (clearButton) {
   clearButton.addEventListener('click', clearIndex);
   clearButton.addEventListener('click', hirdetesekMegjelenitese);
-}
+} */
 if (clearKepButton) {
   clearKepButton.addEventListener('click', clearKep);
 }
@@ -218,11 +224,11 @@ if (clearHirdetButton) {
   clearHirdetButton.addEventListener('click', clearHirdet);
 }
 
-if (submitButtonIndex) {
+/* if (submitButtonIndex) {
   hirdetesekMegjelenitese();
-}
+} */
 
-if (submitButtonIndex) {
+/* if (submitButtonIndex) {
   submitButtonIndex.addEventListener('click', (event) => {
     if (!checkFormIndex()) {
       event.preventDefault();
@@ -230,7 +236,7 @@ if (submitButtonIndex) {
       hirdetesKeresese();
     }
   });
-}
+} */
 
 if (submitButtonKep) {
   submitButtonKep.addEventListener('click', (event) => {

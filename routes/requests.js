@@ -7,8 +7,9 @@ app.use(express.json());
 const router = express.Router();
 router.get(['/', '/index'], async (req, res) => {
   try {
-    const felhasznalok = await db.getFelhasznalok();
-    res.render('index', { felhasznalok });
+    const hirdetesek = await db.getHirdetesek();
+    console.log(hirdetesek);
+    res.render('index', { hirdetesek });
   } catch (err) {
     res.status(500).render('error', { message: `Selection unsuccessful: ${err.message}` });
   }

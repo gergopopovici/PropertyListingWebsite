@@ -70,3 +70,8 @@ export const getFelhasznalok = async () => {
   const result = await pool.query(query);
   return 'recordset' in result ? result.recordset : [];
 };
+export const getHirdetesek = async () => {
+  const query = 'SELECT * FROM Hirdetes';
+  const result = await pool.query(query);
+  return 'recordset' in result ? result.recordset : [];
+};

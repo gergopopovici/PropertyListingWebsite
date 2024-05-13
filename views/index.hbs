@@ -12,12 +12,6 @@
     </nav>
     <div class='kereso'>
       <form action='submit_form' method='POST'>
-        <label for='felhasznalo'>Felhasználó:</label>
-        <select id='felhasznalok' name='felhasznalo'>
-          {{#each felhasznalok}}
-            <option value='{{this.FelhasznaloID}}'>{{this.Nev}}</option>
-          {{/each}}
-        </select>
         <label for='varos'>Város:</label>
         <input type='text' id='varos' name='varos' placeholder='Kolozsvár' />
         <label for='kerulet'>Kerület:</label>
@@ -31,6 +25,16 @@
       </form>
     </div>
     <div id='nagy-div'>
+      {{#each hirdetesek}}
+        <div>
+          <p>{{this.Varos}} {{this.Kerulet}}</p>
+          <p>Felszinterulet:{{this.Felszinterulet}}</p>
+          <p>Ar:{{this.Ar}}</p>
+          <p>Szobak:{{this.Szobak}}</p>
+          <p>Datum:{{this.Datum}}</p>
+          <br><br>
+        </div>
+      {{/each}}
     </div>
     <footer>Popovici Gergo-Benone <br /> pgim2289 <br />523 <br /> </footer>
     <script src='script.js'></script>

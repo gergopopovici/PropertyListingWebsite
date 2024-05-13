@@ -23,8 +23,12 @@ await pool.query(
  CREATE TABLE Hirdetes(
     HirdetesID INT PRIMARY KEY IDENTITY(1,1),
     FelhasznaloID INT,
-    Cim NVARCHAR(MAX),
-    Tartalom NVARCHAR(MAX),
+    Varos NVARCHAR(MAX),
+    Kerulet NVARCHAR(MAX),
+    Felszinterulet INT,
+    Ar INT,
+    Szobak INT,
+    Datum DATE,
     FOREIGN KEY (FelhasznaloID) REFERENCES Felhasznalo(FelhasznaloID)
  )`,
 );
@@ -35,7 +39,6 @@ await pool.query(
     FenykepID INT PRIMARY KEY,
     Fajlnev NVARCHAR(255),
     HirdetesID INT,
-    FOREIGN KEY (HirdetesID) REFERENCES Hirdetes(HirdetesID)
 );`,
 );
 await pool.query(
@@ -47,23 +50,20 @@ await pool.query(
   END;`,
 );
 
-export const insertHirdetes = async (req) => {
-  const userQuery = 'SELECT FelhasznaloID FROM Felhasznalo WHERE Nev = @Nev AND Email = @Email';
-  const userResult = await pool.request().input('Nev', req.Nev).input('Email', req.Email).query(userQuery);
-
-  if (userResult.recordset.length === 0) {
-    throw new Error('User not found');
-  }
-
-  const { FelhasznaloID } = userResult.recordset[0];
-
-  const query = 'INSERT INTO Hirdetes (FelhasznaloID, Cim, Tartalom) VALUES (@FelhasznaloID, @Cim, @Tartalom)';
+export const insertHirdetes = (req) => {
+  const query =
+    'INSERT INTO Hirdetes (FelhasznaloID,Varos, Kerulet,Felszinterulet,Ar,Szobak,Datum) VALUES (@FelhasznaloID,@Varos, @Kerulet,@Felszinterulet,@Ar,@Szobak,@Datum)';
   return pool
     .request()
-    .input('FelhasznaloID', FelhasznaloID)
-    .input('Cim', req.Cim)
-    .input('Tartalom', req.Tartalom)
-    .query(query);
+    .input('FelhasznaloID', req.body.felhasznalo)
+    .input('Varos', req.body.varos)
+    .input('Kerulet', req.body.kerulet)
+    .input('Felszinterulet', req.body.felszinterulet)
+    .input('Ar', req.body.ar)
+    .input('Szobak', req.body.szobak)
+    .input('Datum', req.body.datum)
+    .query(query)
+    .then(() => 1);
 };
 export const getFelhasznalok = async () => {
   const query = 'SELECT * FROM Felhasznalo';

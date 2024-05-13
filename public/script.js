@@ -122,90 +122,6 @@ function checkFormHirdet() {
   }
   return true;
 }
-
-function hirdetesekMegjelenitese() {
-  fetch('/getannouncement')
-    .then((res) => res.json())
-    .then((hirdetesek) => {
-      const nagyDiv = document.getElementById('nagy-div');
-      nagyDiv.innerText = '';
-      hirdetesek.forEach((hirdetes) => {
-        const hirdetesDiv = document.createElement('div');
-        hirdetesDiv.innerText = `
-          ${hirdetes.varos} ${hirdetes.kerulet}
-          Felszínterület: ${hirdetes.felszinterulet} m^2
-          Ár: ${hirdetes.ar} RON
-          Szobák száma: ${hirdetes.szobak}
-          Dátum: ${hirdetes.datum}
-        `;
-        fetch(`/getimages?adId=${hirdetes.id}`)
-          .then((res) => res.json())
-          .then((kepek) => {
-            kepek.forEach((kep) => {
-              const kepHirdetes = document.createElement('img');
-              kepHirdetes.classList.add('kepek');
-              kepHirdetes.src = `/uploads/${kep.image.filename}`;
-              kepHirdetes.alt = 'Hirdetés kép';
-              hirdetesDiv.appendChild(kepHirdetes);
-            });
-          });
-        nagyDiv.appendChild(hirdetesDiv);
-      });
-    });
-}
-
-async function felhasznalokMegjelenitese() {
-  try {
-    const response = await fetch('/requests/felhasznalok');
-    const data = await response.json();
-    const select = document.getElementById('felhasznalo');
-    console.log(select); // Log the select element
-    console.log(data); // Log the data
-    data.Felhasznalok.forEach((felhasznalo) => {
-      // Use data.forEach instead of data.Felhasznalok.forEach
-      console.log(felhasznalo);
-      const opcio = document.createElement('option');
-      opcio.value = felhasznalo.FelhasznaloID;
-      console.log(opcio.value); // Log the value
-      opcio.text = felhasznalo.Nev;
-      console.log(opcio.text); // Log the text
-      select.appendChild(opcio);
-    });
-  } catch (error) {
-    console.error('Hiba történt:', error);
-  }
-}
-
-function hirdetesKeresese() {
-  fetch('/submit_form')
-    .then((res) => res.json())
-    .then((filterhirdetesek) => {
-      const nagyDiv = document.getElementById('nagy-div');
-      nagyDiv.innerText = '';
-      filterhirdetesek.forEach((hirdetes) => {
-        const hirdetesDiv = document.createElement('div');
-        hirdetesDiv.innerText = `
-          ${hirdetes.varos} ${hirdetes.kerulet}
-          Felszínterület: ${hirdetes.felszinterulet} m^2
-          Ár: ${hirdetes.ar} RON
-          Szobák száma: ${hirdetes.szobak}
-          Dátum: ${hirdetes.datum}
-        `;
-        fetch(`/getimages?adId=${hirdetes.id}`)
-          .then((res) => res.json())
-          .then((kepek) => {
-            kepek.forEach((kep) => {
-              const kepHirdetes = document.createElement('img');
-              kepHirdetes.classList.add('kepek');
-              kepHirdetes.src = `/uploads/${kep.image.filename}`;
-              kepHirdetes.alt = 'Hirdetés kép';
-              hirdetesDiv.appendChild(kepHirdetes);
-            });
-          });
-        nagyDiv.appendChild(hirdetesDiv);
-      });
-    });
-}
 const clearButton = document.getElementById('clear');
 const clearKepButton = document.getElementById('clear-kep');
 const clearHirdetButton = document.getElementById('clear-hirdet');
@@ -213,31 +129,15 @@ const submitButtonIndex = document.getElementById('keres');
 const submitButtonKep = document.getElementById('feltolt');
 const submitButtonHirdet = document.getElementById('hirdet');
 
-/* if (clearButton) {
+if (clearButton) {
   clearButton.addEventListener('click', clearIndex);
-  clearButton.addEventListener('click', hirdetesekMegjelenitese);
-} */
+}
 if (clearKepButton) {
   clearKepButton.addEventListener('click', clearKep);
 }
 if (clearHirdetButton) {
   clearHirdetButton.addEventListener('click', clearHirdet);
 }
-
-/* if (submitButtonIndex) {
-  hirdetesekMegjelenitese();
-} */
-
-/* if (submitButtonIndex) {
-  submitButtonIndex.addEventListener('click', (event) => {
-    if (!checkFormIndex()) {
-      event.preventDefault();
-    } else {
-      hirdetesKeresese();
-    }
-  });
-} */
-
 if (submitButtonKep) {
   submitButtonKep.addEventListener('click', (event) => {
     if (!checkFormKep()) {
@@ -255,5 +155,9 @@ if (submitButtonHirdet) {
 }
 
 if (submitButtonIndex) {
-  felhasznalokMegjelenitese();
+  submitButtonIndex.addEventListener('click', (event) => {
+    if (!checkFormIndex()) {
+      event.preventDefault();
+    }
+  });
 }

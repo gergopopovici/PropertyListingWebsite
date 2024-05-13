@@ -75,3 +75,27 @@ export const getHirdetesek = async () => {
   const result = await pool.query(query);
   return 'recordset' in result ? result.recordset : [];
 };
+
+export const getKeresettHirdetesek = async (req) => {
+  let query = 'SELECT * FROM Hirdetes';
+  //  const request = pool.request();
+  if (req.body.varos) {
+    query += ` WHERE Varos = '${req.body.varos}'`;
+    // request.input('Varos', req.body.varos);
+  }
+  if (req.body.kerulet) {
+    query += ` AND Kerulet = '${req.body.kerulet}'`;
+    // request.input('Kerulet', req.body.kerulet);
+  }
+  if (req.body.minar) {
+    query += ` AND Ar >= '${req.body.minar}'`;
+    // request.input('MinAr', req.body.minar);
+  }
+  if (req.body.maxar) {
+    query += ` AND Ar <= '${req.body.maxar}'`;
+    // request.input('MaxAr', req.body.maxar);
+  }
+  console.log(query);
+  const result = await pool.query(query);
+  return 'recordset' in result ? result.recordset : [];
+};

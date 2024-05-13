@@ -48,5 +48,10 @@ router.post(
     return res.redirect('/submitannouncement_form');
   },
 );
+router.post('/submit_form', express.urlencoded({ extended: true }), async (req, res) => {
+  const hirdetesek = await db.getKeresettHirdetesek(req);
+  console.log(hirdetesek);
+  res.render('index', { hirdetesek });
+});
 
 export default router;

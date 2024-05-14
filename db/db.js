@@ -36,9 +36,10 @@ await pool.query(
 await pool.query(
   `IF NOT EXISTS(SELECT * FROM sysobjects WHERE name='Fenykep' and xtype='U')
   CREATE TABLE Fenykep (
-    FenykepID INT PRIMARY KEY,
+    FenykepID INT PRIMARY KEY IDENTITY(1,1),
     Fajlnev NVARCHAR(255),
     HirdetesID INT,
+    FOREIGN KEY (HirdetesID) REFERENCES Hirdetes(HirdetesID)
 );`,
 );
 await pool.query(
@@ -102,5 +103,19 @@ export const getKeresettHirdetesek = async (req) => {
     request.input('MaxAr', req.body.maxar);
   }
   const result = await request.query(query);
+  return 'recordset' in result ? result.recordset : [];
+};
+export const insertPic = (req) => {
+  const query = 'INSERT INTO Fenykep (Fajlnev,HirdetesID) VALUES (@Fajlnev,@HirdetesID)';
+  return pool
+    .request()
+    .input('Fajlnev', req.file.filename)
+    .input('HirdetesID', req.body.adId)
+    .query(query)
+    .then(() => 1);
+};
+export const getPic = async (id) => {
+  const query = 'SELECT Fajlnev FROM Fenykep WHERE HirdetesID = @HirdetesID';
+  const result = await pool.request().input('HirdetesID', id).query(query);
   return 'recordset' in result ? result.recordset : [];
 };

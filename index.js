@@ -97,9 +97,6 @@ app.engine(
     partialsDir: path.join(process.cwd(), 'views/partials'),
   }),
 );
-/* app.get('/', (req, res) => {
-  res.render('index', { aboutme: 'geci' });
-}); */
 app.use('/', requestRoutes);
 
 app.listen(3000, () => {

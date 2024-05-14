@@ -1,14 +1,32 @@
 import express from 'express';
+import multer from 'multer';
+import path from 'path';
 import { check, validationResult } from 'express-validator';
+import { existsSync, mkdirSync } from 'fs';
 import * as db from '../db/db.js';
 
 const app = express();
 app.use(express.json());
+const uploadDir = path.join(process.cwd(), 'uploadDir');
 const router = express.Router();
+if (!existsSync(uploadDir)) {
+  mkdirSync(uploadDir);
+}
+app.use('/uploads', express.static(uploadDir));
+const upload = multer({ dest: uploadDir, limits: { fileSize: 5000000 } });
+
+router.post('/submitpic_form', upload.single('kep'), async (req, res) => {
+  const beszurt = await db.insertPic(req);
+  if (beszurt === 1) {
+    return res.redirect(`/tovabb?id=${req.body.adId}`);
+  }
+  return res.redirect('/index');
+});
+app.use('/uploads', express.static(uploadDir));
+const mutlerUpload = multer({ dest: uploadDir, limits: { fileSize: 5000000 } });
 router.get(['/', '/index'], async (req, res) => {
   try {
     const hirdetesek = await db.getHirdetesek();
-    console.log(hirdetesek);
     res.render('index', { hirdetesek });
   } catch (err) {
     res.status(500).render('error', { message: `Selection unsuccessful: ${err.message}` });
@@ -39,8 +57,6 @@ router.post(
       console.log(req.body.varos);
       return res.redirect('/hirdetes');
     }
-    // const { felhasznalo, varos, kerulet, felszinterulet, ar, szobak, datum } = req.body;
-    // console.log(felhasznalo, varos);
     const beszurt = await db.insertHirdetes(req);
     if (beszurt === 1) {
       return res.redirect('/index');
@@ -55,7 +71,17 @@ router.post('/submit_form', express.urlencoded({ extended: true }), async (req, 
 router.get('/tovabb', async (req, res) => {
   const { id } = req.query;
   const hirdetes = await db.getHirdetes(id);
-  console.log(hirdetes);
-  res.render('kepfeltolt', { hirdetes });
+  const kepek = await db.getPic(id);
+  console.log(kepek);
+  res.render('kepfeltolt', { hirdetes, kepek });
 });
+
+router.post('/submitpic_form', mutlerUpload.single('kep'), async (req, res) => {
+  const beszurt = await db.insertPic(req);
+  if (beszurt === 1) {
+    return res.redirect(`/tovabb?id=${req.body.adId}`);
+  }
+  return res.redirect('/index');
+});
+
 export default router;

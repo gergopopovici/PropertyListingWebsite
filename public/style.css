@@ -15,7 +15,7 @@ nav {
   display: flex;
   justify-content: space-around;
 }
-nav a {
+a {
   background-color: red;
   color: white;
   padding: 14px 20px;
@@ -25,10 +25,10 @@ nav a {
   border-radius: 10px;
   transition: background-color 0.3s;
 }
-nav a:hover {
+a:hover {
   background-color: darkblue;
 }
-nav a:visited {
+a:visited {
   text-decoration: none;
   color: white;
 }

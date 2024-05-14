@@ -14,31 +14,13 @@ if (!existsSync(uploadDir)) {
 }
 app.use('/uploads', express.static(uploadDir));
 const upload = multer({ dest: uploadDir, limits: { fileSize: 5000000 } });
-
-router.post('/submitpic_form', upload.single('kep'), async (req, res) => {
-  const beszurt = await db.insertPic(req);
-  if (beszurt === 1) {
-    return res.redirect(`/tovabb?id=${req.body.adId}`);
-  }
-  return res.redirect('/index');
-});
-app.use('/uploads', express.static(uploadDir));
-const mutlerUpload = multer({ dest: uploadDir, limits: { fileSize: 5000000 } });
 router.get(['/', '/index'], async (req, res) => {
-  try {
-    const hirdetesek = await db.getHirdetesek();
-    res.render('index', { hirdetesek });
-  } catch (err) {
-    res.status(500).render('error', { message: `Selection unsuccessful: ${err.message}` });
-  }
+  const hirdetesek = await db.getHirdetesek();
+  res.render('index', { hirdetesek });
 });
 router.get(['/hirdetes'], async (req, res) => {
-  try {
-    const felhasznalo = await db.getFelhasznalok();
-    res.render('hirdetes', { felhasznalok: felhasznalo });
-  } catch (err) {
-    res.status(500).render('error', { message: `Selection unsuccessful: ${err.message}` });
-  }
+  const felhasznalo = await db.getFelhasznalok();
+  res.render('hirdetes', { felhasznalok: felhasznalo });
 });
 router.post(
   '/submitannouncement_form',
@@ -54,14 +36,13 @@ router.post(
   async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      console.log(req.body.varos);
-      return res.redirect('/hirdetes');
+      return res.status(500).render('hirdetes', { message: `Hiba történt a validálás során${errors.array()}` });
     }
     const beszurt = await db.insertHirdetes(req);
     if (beszurt === 1) {
       return res.redirect('/index');
     }
-    return res.redirect('/submitannouncement_form');
+    return res.status(500).render('hirdetes', { message: 'Hiba történt a beszurás során' });
   },
 );
 router.post('/submit_form', express.urlencoded({ extended: true }), async (req, res) => {
@@ -72,16 +53,15 @@ router.get('/tovabb', async (req, res) => {
   const { id } = req.query;
   const hirdetes = await db.getHirdetes(id);
   const kepek = await db.getPic(id);
-  console.log(kepek);
   res.render('kepfeltolt', { hirdetes, kepek });
 });
 
-router.post('/submitpic_form', mutlerUpload.single('kep'), async (req, res) => {
+router.post('/submitpic_form', upload.single('kep'), async (req, res) => {
   const beszurt = await db.insertPic(req);
   if (beszurt === 1) {
     return res.redirect(`/tovabb?id=${req.body.adId}`);
   }
-  return res.redirect('/index');
+  return res.status(500).render('kepfeltolt', { message: 'Hiba történt a kép feltöltése során' });
 });
 
 export default router;

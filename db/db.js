@@ -75,27 +75,32 @@ export const getHirdetesek = async () => {
   const result = await pool.query(query);
   return 'recordset' in result ? result.recordset : [];
 };
-
+export const getHirdetes = async (id) => {
+  const query = 'SELECT * FROM Hirdetes WHERE HirdetesID = @HirdetesID';
+  const result = await pool.request().input('HirdetesID', id).query(query);
+  return 'recordset' in result ? result.recordset : [];
+};
 export const getKeresettHirdetesek = async (req) => {
-  let query = 'SELECT * FROM Hirdetes';
-  //  const request = pool.request();
+  let query = 'SELECT * FROM Hirdetes WHERE 1=1';
+  const request = pool.request();
+
   if (req.body.varos) {
-    query += ` WHERE Varos = '${req.body.varos}'`;
-    // request.input('Varos', req.body.varos);
+    query += ' AND Varos = @Varos';
+    request.input('Varos', req.body.varos);
   }
+
   if (req.body.kerulet) {
-    query += ` AND Kerulet = '${req.body.kerulet}'`;
-    // request.input('Kerulet', req.body.kerulet);
+    query += ' AND Kerulet = @Kerulet';
+    request.input('Kerulet', req.body.kerulet);
   }
   if (req.body.minar) {
-    query += ` AND Ar >= '${req.body.minar}'`;
-    // request.input('MinAr', req.body.minar);
+    query += ' AND Ar >= @MinAr';
+    request.input('MinAr', req.body.minar);
   }
   if (req.body.maxar) {
-    query += ` AND Ar <= '${req.body.maxar}'`;
-    // request.input('MaxAr', req.body.maxar);
+    query += ' AND Ar <= @MaxAr';
+    request.input('MaxAr', req.body.maxar);
   }
-  console.log(query);
-  const result = await pool.query(query);
+  const result = await request.query(query);
   return 'recordset' in result ? result.recordset : [];
 };

@@ -17,33 +17,6 @@ function clearHirdet() {
   document.getElementById('datum').value = '';
 }
 
-function checkFormIndex() {
-  const varos = document.getElementById('varos').value;
-  const minar = document.getElementById('minar').value;
-  const maxar = document.getElementById('maxar').value;
-  if (varos === '') {
-    alert('Adja meg a kereset város nevét!');
-    return false;
-  }
-  if (/[^a-zA-Z]/.test(varos)) {
-    alert('A város neve nem lehet szám!');
-    return false;
-  }
-  if (/[^0-9]/.test(minar) || /[^0-9]/.test(maxar)) {
-    alert('Az ár csak szám lehet!');
-    return false;
-  }
-  if (parseInt(minar, 10) > parseInt(maxar, 10)) {
-    alert('A minimum ár nem lehet nagyobb a maximum árnál!');
-    return false;
-  }
-  if (minar < 0 || maxar < 0) {
-    alert('Az ár nem lehet negatív szám!');
-    return false;
-  }
-  return true;
-}
-
 function checkFormKep() {
   const adId = document.getElementById('adId').value;
   const image = document.getElementById('kep').value;
@@ -125,7 +98,6 @@ function checkFormHirdet() {
 const clearButton = document.getElementById('clear');
 const clearKepButton = document.getElementById('clear-kep');
 const clearHirdetButton = document.getElementById('clear-hirdet');
-const submitButtonIndex = document.getElementById('keres');
 const submitButtonKep = document.getElementById('feltolt');
 const submitButtonHirdet = document.getElementById('hirdet');
 
@@ -149,14 +121,6 @@ if (submitButtonKep) {
 if (submitButtonHirdet) {
   submitButtonHirdet.addEventListener('click', (event) => {
     if (!checkFormHirdet()) {
-      event.preventDefault();
-    }
-  });
-}
-
-if (submitButtonIndex) {
-  submitButtonIndex.addEventListener('click', (event) => {
-    if (!checkFormIndex()) {
       event.preventDefault();
     }
   });

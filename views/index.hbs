@@ -1,25 +1,24 @@
 <html lang='hu'>
   <head>
-    <meta charset='UTF-8' />
-    <link rel='stylesheet' href='style.css' />
+    <meta charset='UTF-8' >
+    <link rel='stylesheet' href='style.css'>
     <title>Index</title>
   </head>
   <body>
     <nav>
-      <img class='logo' src='houseicon.png' alt='logo' />
+      <img class='logo' src='houseicon.png' alt='logo'>
       <a href='/hirdetes'>Hirdetés</a>
-      <a href='kepfeltolt.html'>Kép feltöltése</a>
     </nav>
     <div class='kereso'>
       <form action='submit_form' method='POST'>
         <label for='varos'>Város:</label>
-        <input type='text' id='varos' name='varos' placeholder='Kolozsvár' />
+        <input type='text' id='varos' name='varos' placeholder='Kolozsvár' >
         <label for='kerulet'>Kerület:</label>
-        <input type='text' id='kerulet' name='kerulet' placeholder='Marasti' />
+        <input type='text' id='kerulet' name='kerulet' placeholder='Marasti' >
         <label for='minar'>Minimum ár:</label>
-        <input type='number' id='minar' name='minar' placeholder='Minimum ár' />
+        <input type='number' id='minar' name='minar' placeholder='Minimum ár' >
         <label for='maxar'>Maximum ár:</label>
-        <input type='number' id='maxar' name='maxar' placeholder='Maximum ár' />
+        <input type='number' id='maxar' name='maxar' placeholder='Maximum ár' >
         <button type='submit' id='keres'>Keresés</button>
         <button type='button' id='clear'>Törlés</button>
       </form>
@@ -32,6 +31,7 @@
           <p>Ar:{{this.Ar}}</p>
           <p>Szobak:{{this.Szobak}}</p>
           <p>Datum:{{this.Datum}}</p>
+		  <a href="/tovabb?id={{this.HirdetesID}}">Tovább</a>
           <br><br>
         </div>
       {{/each}}

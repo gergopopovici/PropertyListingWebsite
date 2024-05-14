@@ -1,26 +1,38 @@
 <html lang='hu'>
   <head>
-    <meta charset='UTF-8' />
-    <link rel='stylesheet' href='{{stylesheet}}' />
-    <title>{{title}}</title>
+    <meta charset='UTF-8' >
+    <link rel='stylesheet' href='style.css' >
+    <title>Lakás hirdető</title>
   </head>
   <body>
     <nav>
-      <img class='logo' src='{{logoSrc}}' alt='logo' />
-      <a href='{{indexLink}}'>Főoldal</a>
-      <a href='{{hirdetesLink}}'>Hirdetés</a>
+      <img class='logo' src='houseicon.png' alt='logo' >
+      <a href='/index'>Főoldal</a>
     </nav>
+	<div id='nagy-div'>
+		{{#each hirdetes}}
+			<div>
+			  <p>{{this.Varos}} {{this.Kerulet}}</p>
+			  <p>Felszinterulet:{{this.Felszinterulet}}</p>
+			  <p>Ar:{{this.Ar}}</p>
+			  <p>Szobak:{{this.Szobak}}</p>
+			  <p>Datum:{{this.Datum}}</p>
+			  <br ><br>
+			</div>
+		{{/each}}
+	</div>
     <div class='kepfeltolt'>
-      <form action='{{submitPicformMethod}}' method='POST' enctype='multipart/form-data'>
-        <label for='adId'>Hirdetés ID:</label>
-        <input type='number' id='adId' name='adId' placeholder='{{hirdetesID}}' />
+	{{#each hirdetes}}
+      <form action='submitpic_form' method='POST' enctype='multipart/form-data'>
+        <input type='hidden' id='adId' name='adId' value='{{this.HirdetesID}}'>
         <label for='kep'>Kép:</label>
-        <input type='file' id='kep' name='kep' />
+        <input type='file' id='kep' name='kep'>
         <button type='submit' id='feltolt'>Kép feltöltése</button>
         <button type='button' id='clear-kep'>Törlés</button>
       </form>
+	{{/each}}
     </div>
-    <footer>{{footerText}}</footer>
+    <footer>Popovici Gergo-Benone <br> pgim2289 <br>523 <br> <footer>
     <script src='script.js'></script>
   </body>
 </html>

@@ -50,8 +50,12 @@ router.post(
 );
 router.post('/submit_form', express.urlencoded({ extended: true }), async (req, res) => {
   const hirdetesek = await db.getKeresettHirdetesek(req);
-  console.log(hirdetesek);
   res.render('index', { hirdetesek });
 });
-
+router.get('/tovabb', async (req, res) => {
+  const { id } = req.query;
+  const hirdetes = await db.getHirdetes(id);
+  console.log(hirdetes);
+  res.render('kepfeltolt', { hirdetes });
+});
 export default router;

@@ -64,4 +64,11 @@ router.post('/submitpic_form', upload.single('kep'), async (req, res) => {
   return res.status(500).render('kepfeltolt', { message: 'Hiba történt a kép feltöltése során' });
 });
 
+router.get('/hirdetes/:id', async (req, res) => {
+  const { id } = req.params;
+  const hirdetes = await db.getHirdetes(id);
+  console.log(hirdetes);
+  res.json(hirdetes);
+});
+
 export default router;

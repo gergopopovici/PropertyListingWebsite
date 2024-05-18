@@ -1,0 +1,43 @@
+<!DOCTYPE HTML>
+<html lang="hu">
+  <head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="style.css">
+    <title>Lakás hirdető</title>
+  </head>
+  <body>
+    <nav>
+      <img class="logo" src="houseicon.png" alt="logo">
+      <a href="/index">Főoldal</a>
+    </nav>
+	<div id="nagy-div">
+		{{#each hirdetes}}
+			<div>
+			  <p>{{this.Varos}} {{this.Kerulet}}</p>
+			  <p>Felszinterulet:{{this.Felszinterulet}}</p>
+			  <p>Ar:{{this.Ar}}</p>
+			  <p>Szobak:{{this.Szobak}}</p>
+			  <p>Datum:{{this.Datum}}</p>
+			  <br ><br>
+			</div>
+		{{/each}}
+		{{#each kepek}}
+		  <img class="kepek" src="/uploads/{{this.Fajlnev}}" alt="Kép">
+		{{/each}}
+	</div>
+    <div class="kepfeltolt">
+	{{#each hirdetes}}
+      <form action="submitpic_form" method="POST" enctype="multipart/form-data">
+        <input type="hidden" id="adId" name="adId" value="{{this.HirdetesID}}">
+        <label for="kep">Kép:</label>
+        <input type="file" id="kep" name="kep">
+        <button type="submit" id="feltolt">Kép feltöltése</button>
+        <button type="button" id="clear-kep">Törlés</button>
+      </form>
+	{{/each}}
+      <p>{{message}}</p>
+    </div>
+    <footer>Popovici Gergo-Benone<br>pgim2289<br>523<br></footer>
+    <script src="script.js"></script>
+  </body>
+</html>

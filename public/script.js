@@ -5,7 +5,6 @@ function clearIndex() {
   document.getElementById('maxar').value = '';
 }
 function clearKep() {
-  document.getElementById('adId').value = '';
   document.getElementById('kep').value = '';
 }
 function clearHirdet() {
@@ -136,6 +135,20 @@ if (clearButton) {
 }
 if (clearKepButton) {
   clearKepButton.addEventListener('click', clearKep);
+  document.addEventListener('click', (event) => {
+    if (event.target.matches('.delete-kep')) {
+      const id = event.target.getAttribute('kep-id');
+      fetch(`/kep/${id}`, { method: 'DELETE' })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.siker) {
+            event.target.parentElement.remove();
+          } else {
+            alert('Hiba történt a kép törlése során!');
+          }
+        });
+    }
+  });
 }
 if (clearHirdetButton) {
   clearHirdetButton.addEventListener('click', clearHirdet);

@@ -71,4 +71,14 @@ router.get('/hirdetes/:id', async (req, res) => {
   res.json(hirdetes);
 });
 
+router.delete('/kep/:id', async (req, res) => {
+  const { id } = req.params;
+  const torolt = await db.deletePic(id);
+  if (torolt) {
+    res.json({ siker: true });
+  } else {
+    res.json({ siker: false });
+  }
+});
+
 export default router;

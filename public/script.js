@@ -121,12 +121,10 @@ if (clearButton) {
       while (target != null && !target.classList.contains('hirdetes')) {
         target = target.parentElement;
       }
-      if (target == null) return;
       const id = target.getAttribute('hirdetes-id');
       fetch(`/hirdetes/${id}`)
         .then((res) => res.json())
         .then((hirdetes) => {
-          console.log(hirdetes);
           const moreInformation = document.getElementById(id);
           moreInfo(hirdetes[0], moreInformation);
         });

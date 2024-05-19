@@ -2,7 +2,7 @@ import express from 'express';
 import multer from 'multer';
 import path from 'path';
 import { check, validationResult } from 'express-validator';
-import { existsSync, mkdirSync } from 'fs';
+import fs, { existsSync, mkdirSync } from 'fs';
 import * as db from '../db/db.js';
 
 const app = express();
@@ -67,14 +67,15 @@ router.post('/submitpic_form', upload.single('kep'), async (req, res) => {
 router.get('/hirdetes/:id', async (req, res) => {
   const { id } = req.params;
   const hirdetes = await db.getHirdetes(id);
-  console.log(hirdetes);
   res.json(hirdetes);
 });
 
 router.delete('/kep/:id', async (req, res) => {
   const { id } = req.params;
+  const kep = await db.getPicById(id);
   const torolt = await db.deletePic(id);
   if (torolt) {
+    fs.unlinkSync(path.join(uploadDir, kep[0].Fajlnev));
     res.json({ siker: true });
   } else {
     res.json({ siker: false });

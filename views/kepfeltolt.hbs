@@ -20,10 +20,12 @@
           <br /><br />
         </div>
       {{/each}}
-      <div class='kepek-div'>
+      <div class='kepek-tarolo'>
         {{#each kepek}}
-          <img class='kepek' src='/uploads/{{this.Fajlnev}}' alt='Kép' />
-          <button type='button' class='delete-kep' kep-id='{{this.FenykepID}}'> Törlés</button>
+          <div class='kepek-div'>
+            <img class='kepek' src='/uploads/{{this.Fajlnev}}' alt='Kép' />
+            <button type='button' class='delete-kep' kep-id='{{this.FenykepID}}'> Törlés</button>
+          </div>
         {{/each}}
       </div>
     </div>

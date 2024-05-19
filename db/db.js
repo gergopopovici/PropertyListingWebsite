@@ -125,3 +125,8 @@ export const deletePic = async (id) => {
   const result = await pool.request().input('FenykepID', id).query(query);
   return result.rowsAffected[0] > 0;
 };
+export const getPicById = async (id) => {
+  const query = 'SELECT Fajlnev FROM Fenykep WHERE FenykepID = @FenykepID';
+  const result = await pool.request().input('FenykepID', id).query(query);
+  return 'recordset' in result ? result.recordset : [];
+};

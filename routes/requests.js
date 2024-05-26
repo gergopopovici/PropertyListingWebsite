@@ -88,9 +88,9 @@ router.delete('/kep/:id', async (req, res) => {
     const torolt = await db.deletePic(id);
     if (torolt) {
       fs.unlinkSync(path.join(uploadDir, kep[0].Fajlnev));
-      return res.json({ siker: true });
+      return res.status(200).end();
     }
-    return res.json({ siker: false });
+    return res.status(500).json({ message: 'A kép törlése nem sikerült' });
   } catch (err) {
     console.error(err);
     return res.status(500).json({ message: 'Szerverhiba' });

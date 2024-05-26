@@ -150,14 +150,10 @@ if (clearKepButton) {
           if (!res.ok) {
             throw new Error('Hiba történt a kérés során');
           }
-          return res.json();
+          return res;
         })
-        .then((data) => {
-          if (data.siker) {
-            event.target.parentElement.remove();
-          } else {
-            alert('Hiba történt a kép törlése során!');
-          }
+        .then(() => {
+          event.target.parentElement.remove();
         })
         .catch((err) => {
           console.error(err);

@@ -65,20 +65,35 @@ router.post('/submitpic_form', upload.single('kep'), async (req, res) => {
 });
 
 router.get('/hirdetes/:id', async (req, res) => {
-  const { id } = req.params;
-  const hirdetes = await db.getHirdetes(id);
-  res.json(hirdetes);
+  try {
+    const { id } = req.params;
+    const hirdetes = await db.getHirdetes(id);
+    if (!hirdetes) {
+      return res.status(404).json({ message: 'Hirdetés nem található' });
+    }
+    return res.json(hirdetes);
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: 'Szerverhiba' });
+  }
 });
 
 router.delete('/kep/:id', async (req, res) => {
-  const { id } = req.params;
-  const kep = await db.getPicById(id);
-  const torolt = await db.deletePic(id);
-  if (torolt) {
-    fs.unlinkSync(path.join(uploadDir, kep[0].Fajlnev));
-    res.json({ siker: true });
-  } else {
-    res.json({ siker: false });
+  try {
+    const { id } = req.params;
+    const kep = await db.getPicById(id);
+    if (!kep || kep.length === 0) {
+      return res.status(404).json({ message: 'Kép nem található' });
+    }
+    const torolt = await db.deletePic(id);
+    if (torolt) {
+      fs.unlinkSync(path.join(uploadDir, kep[0].Fajlnev));
+      return res.json({ siker: true });
+    }
+    return res.json({ siker: false });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: 'Szerverhiba' });
   }
 });
 

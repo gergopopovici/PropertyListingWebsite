@@ -123,10 +123,19 @@ if (clearButton) {
       }
       const id = target.getAttribute('hirdetes-id');
       fetch(`/hirdetes/${id}`)
-        .then((res) => res.json())
+        .then((res) => {
+          if (!res.ok) {
+            throw new Error('Hiba történt a kérés során');
+          }
+          return res.json();
+        })
         .then((hirdetes) => {
           const moreInformation = document.getElementById(id);
           moreInfo(hirdetes[0], moreInformation);
+        })
+        .catch((err) => {
+          console.error(err);
+          alert('hiba történt a kérés során');
         });
     }
   });
@@ -137,13 +146,22 @@ if (clearKepButton) {
     if (event.target.matches('.delete-kep')) {
       const id = event.target.getAttribute('kep-id');
       fetch(`/kep/${id}`, { method: 'DELETE' })
-        .then((res) => res.json())
+        .then((res) => {
+          if (!res.ok) {
+            throw new Error('Hiba történt a kérés során');
+          }
+          return res.json();
+        })
         .then((data) => {
           if (data.siker) {
             event.target.parentElement.remove();
           } else {
             alert('Hiba történt a kép törlése során!');
           }
+        })
+        .catch((err) => {
+          console.error(err);
+          alert('hiba történt a kérés során');
         });
     }
   });

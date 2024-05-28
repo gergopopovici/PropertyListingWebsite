@@ -55,3 +55,6 @@ div#keresettElemek {
   font-size: large;
   font-weight: bold;
 }
+.kepek-tarolo {
+  display: flex;
+}

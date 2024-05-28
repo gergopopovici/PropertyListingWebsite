@@ -5,7 +5,6 @@ function clearIndex() {
   document.getElementById('maxar').value = '';
 }
 function clearKep() {
-  document.getElementById('adId').value = '';
   document.getElementById('kep').value = '';
 }
 function clearHirdet() {
@@ -95,6 +94,19 @@ function checkFormHirdet() {
   }
   return true;
 }
+
+function moreInfo(data, moreInformation) {
+  while (moreInformation.firstChild) {
+    moreInformation.removeChild(moreInformation.firstChild);
+  }
+  const szobak = document.createElement('p');
+  szobak.textContent = `Szobák száma: ${data.Szobak}`;
+  moreInformation.appendChild(szobak);
+  const datum = document.createElement('p');
+  datum.textContent = `Hirdetés dátuma: ${data.Datum}`;
+  moreInformation.appendChild(datum);
+}
+
 const clearButton = document.getElementById('clear');
 const clearKepButton = document.getElementById('clear-kep');
 const clearHirdetButton = document.getElementById('clear-hirdet');
@@ -103,9 +115,52 @@ const submitButtonHirdet = document.getElementById('hirdet');
 
 if (clearButton) {
   clearButton.addEventListener('click', clearIndex);
+  document.addEventListener('click', (event) => {
+    if (event.target.matches('.sor')) {
+      let { target } = event;
+      while (target != null && !target.classList.contains('hirdetes')) {
+        target = target.parentElement;
+      }
+      const id = target.getAttribute('hirdetes-id');
+      fetch(`/hirdetes/${id}`)
+        .then((res) => {
+          if (!res.ok) {
+            throw new Error('Hiba történt a kérés során');
+          }
+          return res.json();
+        })
+        .then((hirdetes) => {
+          const moreInformation = document.getElementById(id);
+          moreInfo(hirdetes[0], moreInformation);
+        })
+        .catch((err) => {
+          console.error(err);
+          alert('hiba történt a kérés során');
+        });
+    }
+  });
 }
 if (clearKepButton) {
   clearKepButton.addEventListener('click', clearKep);
+  document.addEventListener('click', (event) => {
+    if (event.target.matches('.delete-kep')) {
+      const id = event.target.getAttribute('kep-id');
+      fetch(`/kep/${id}`, { method: 'DELETE' })
+        .then((res) => {
+          if (!res.ok) {
+            throw new Error('Hiba történt a kérés során');
+          }
+          return res;
+        })
+        .then(() => {
+          event.target.parentElement.remove();
+        })
+        .catch((err) => {
+          console.error(err);
+          alert('hiba történt a kérés során');
+        });
+    }
+  });
 }
 if (clearHirdetButton) {
   clearHirdetButton.addEventListener('click', clearHirdet);

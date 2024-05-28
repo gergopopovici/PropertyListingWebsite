@@ -115,7 +115,18 @@ export const insertPic = (req) => {
     .then(() => 1);
 };
 export const getPic = async (id) => {
-  const query = 'SELECT Fajlnev FROM Fenykep WHERE HirdetesID = @HirdetesID';
+  const query = 'SELECT * FROM Fenykep WHERE HirdetesID = @HirdetesID';
   const result = await pool.request().input('HirdetesID', id).query(query);
+  return 'recordset' in result ? result.recordset : [];
+};
+
+export const deletePic = async (id) => {
+  const query = 'DELETE FROM Fenykep WHERE FenykepID = @FenykepID';
+  const result = await pool.request().input('FenykepID', id).query(query);
+  return result.rowsAffected[0] > 0;
+};
+export const getPicById = async (id) => {
+  const query = 'SELECT Fajlnev FROM Fenykep WHERE FenykepID = @FenykepID';
+  const result = await pool.request().input('FenykepID', id).query(query);
   return 'recordset' in result ? result.recordset : [];
 };

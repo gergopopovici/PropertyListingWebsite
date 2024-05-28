@@ -2,7 +2,7 @@ import express from 'express';
 import multer from 'multer';
 import path from 'path';
 import { check, validationResult } from 'express-validator';
-import { existsSync, mkdirSync } from 'fs';
+import fs, { existsSync, mkdirSync } from 'fs';
 import * as db from '../db/db.js';
 
 const app = express();
@@ -62,6 +62,39 @@ router.post('/submitpic_form', upload.single('kep'), async (req, res) => {
     return res.redirect(`/tovabb?id=${req.body.adId}`);
   }
   return res.status(500).render('kepfeltolt', { message: 'Hiba történt a kép feltöltése során' });
+});
+
+router.get('/hirdetes/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const hirdetes = await db.getHirdetes(id);
+    if (!hirdetes) {
+      return res.status(404).json({ message: 'Hirdetés nem található' });
+    }
+    return res.json(hirdetes);
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: 'Szerverhiba' });
+  }
+});
+
+router.delete('/kep/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const kep = await db.getPicById(id);
+    if (!kep || kep.length === 0) {
+      return res.status(404).json({ message: 'Kép nem található' });
+    }
+    const torolt = await db.deletePic(id);
+    if (torolt) {
+      fs.unlinkSync(path.join(uploadDir, kep[0].Fajlnev));
+      return res.status(200).end();
+    }
+    return res.status(500).json({ message: 'A kép törlése nem sikerült' });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: 'Szerverhiba' });
+  }
 });
 
 export default router;

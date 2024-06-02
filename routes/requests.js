@@ -16,11 +16,11 @@ app.use('/uploads', express.static(uploadDir));
 const upload = multer({ dest: uploadDir, limits: { fileSize: 5000000 } });
 router.get(['/', '/index'], async (req, res) => {
   const hirdetesek = await db.getHirdetesek();
-  res.render('index', { hirdetesek });
+  res.render('index', { title: 'index', hirdetesek });
 });
 router.get(['/hirdetes'], async (req, res) => {
   const felhasznalo = await db.getFelhasznalok();
-  res.render('hirdetes', { felhasznalok: felhasznalo });
+  res.render('hirdetes', { title: 'hirdetés', felhasznalok: felhasznalo });
 });
 router.post(
   '/submitannouncement_form',
@@ -53,7 +53,7 @@ router.get('/tovabb', async (req, res) => {
   const { id } = req.query;
   const hirdetes = await db.getHirdetes(id);
   const kepek = await db.getPic(id);
-  res.render('kepfeltolt', { hirdetes, kepek });
+  res.render('kepfeltolt', { title: 'Képek', hirdetes, kepek });
 });
 
 router.post('/submitpic_form', upload.single('kep'), async (req, res) => {

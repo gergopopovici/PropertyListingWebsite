@@ -1,0 +1,8 @@
+<link rel='stylesheet' href='/style.css' />
+{{#if felhasznalo}}
+  <p>Bejelentkezve mint: {{felhasznalo.Nev}}</p>
+  <button id='logout'>Kijelentkezés</button>
+{{else}}
+  <a href='/login'>Bejelentkezés</a>
+  <a href='/register'>Regisztráció</a>
+{{/if}}

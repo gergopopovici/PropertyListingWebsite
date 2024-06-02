@@ -112,11 +112,13 @@ const clearKepButton = document.getElementById('clear-kep');
 const clearHirdetButton = document.getElementById('clear-hirdet');
 const submitButtonKep = document.getElementById('feltolt');
 const submitButtonHirdet = document.getElementById('hirdet');
+const sorElements = document.querySelectorAll('.sor');
+const deleteKepElements = document.querySelectorAll('.delete-kep');
 
 if (clearButton) {
   clearButton.addEventListener('click', clearIndex);
-  document.addEventListener('click', (event) => {
-    if (event.target.matches('.sor')) {
+  sorElements.forEach((sorElement) => {
+    sorElement.addEventListener('click', (event) => {
       let { target } = event;
       while (target != null && !target.classList.contains('hirdetes')) {
         target = target.parentElement;
@@ -135,15 +137,15 @@ if (clearButton) {
         })
         .catch((err) => {
           console.error(err);
-          alert('hiba történt a kérés során');
+          alert('Hiba történt a kérés során');
         });
-    }
+    });
   });
 }
 if (clearKepButton) {
   clearKepButton.addEventListener('click', clearKep);
-  document.addEventListener('click', (event) => {
-    if (event.target.matches('.delete-kep')) {
+  deleteKepElements.forEach((deleteKepElement) => {
+    deleteKepElement.addEventListener('click', (event) => {
       const id = event.target.getAttribute('kep-id');
       fetch(`/kep/${id}`, { method: 'DELETE' })
         .then((res) => {
@@ -159,7 +161,7 @@ if (clearKepButton) {
           console.error(err);
           alert('hiba történt a kérés során');
         });
-    }
+    });
   });
 }
 if (clearHirdetButton) {

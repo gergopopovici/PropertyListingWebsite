@@ -77,7 +77,6 @@ router.get('/hirdetes/:id', async (req, res) => {
     return res.status(500).json({ message: 'Szerverhiba' });
   }
 });
-
 router.delete('/kep/:id', async (req, res) => {
   try {
     const { id } = req.params;
@@ -96,5 +95,10 @@ router.delete('/kep/:id', async (req, res) => {
     return res.status(500).json({ message: 'Szerverhiba' });
   }
 });
-
+router.get('/register', (req, res) => {
+  res.render('regisztracio', { title: 'Regisztráció' });
+});
+router.get('/login', (req, res) => {
+  res.render('bejelentkezes', { title: 'Bejelentkezés' });
+});
 export default router;

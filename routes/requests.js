@@ -2,6 +2,8 @@ import express from 'express';
 import multer from 'multer';
 import path from 'path';
 import crypto from 'crypto';
+import jwt from 'jsonwebtoken';
+import cookieParser from 'cookie-parser';
 import { check, validationResult } from 'express-validator';
 import fs, { existsSync, mkdirSync } from 'fs';
 import * as db from '../db/db.js';
@@ -13,11 +15,21 @@ const router = express.Router();
 if (!existsSync(uploadDir)) {
   mkdirSync(uploadDir);
 }
+const secret = '92e001516475925247579858f731b6c65f178002bbb93c12cf3b09afeaceeca6';
 app.use('/uploads', express.static(uploadDir));
+app.use(cookieParser());
 const upload = multer({ dest: uploadDir, limits: { fileSize: 5000000 } });
 router.get(['/', '/index'], async (req, res) => {
+  const { token } = req.cookies;
+  if (token) {
+    const decoded = jwt.verify(token, secret);
+    const { felhasznalo } = decoded;
+    const hirdetesek = await db.getHirdetesek();
+    console.log(felhasznalo.Nev);
+    return res.render('index', { title: 'index', hirdetesek, felhasznalo });
+  }
   const hirdetesek = await db.getHirdetesek();
-  res.render('index', { title: 'index', hirdetesek });
+  return res.render('index', { title: 'index', hirdetesek });
 });
 router.get(['/hirdetes'], async (req, res) => {
   const felhasznalo = await db.getFelhasznalok();
@@ -159,4 +171,38 @@ router.post(
     return res.status(500).render('regisztracio', { message: 'Hiba történt a beszurás során' });
   },
 );
+router.post(
+  '/submitlogin_form',
+  express.urlencoded({ extended: true }),
+  [
+    check('felhasznalonev').isString().isLength({ min: 1 }).withMessage('Felhasználónév megadása kötelező!'),
+    check('jelszo').isString().isLength({ min: 1 }).withMessage('Jelszó megadása kötelező!'),
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(500).render('bejelentkezes', { message: 'Hiba történt a validálás során' });
+    }
+    const felhasznalo = await db.getLogindData(req);
+    if (felhasznalo.Length === 0) {
+      return res.status(401).render('bejelentkezes', { messsage: 'Nem található ilyen felhasználó' });
+    }
+    const jelszoHash = felhasznalo[0].Jelszo;
+    const so = felhasznalo[0].Salt;
+    const hash = await crypto.pbkdf2Sync(req.body.jelszo, Buffer.from(so, 'base64'), 1000, 30, 'sha512');
+    const hashWithSalt = `${hash.toString('base64')}:${so}`;
+    if (jelszoHash !== hashWithSalt) {
+      return res.status(401).render('bejelentkezes', { message: 'Hibás jelszó' });
+    }
+    const token = jwt.sign({ felhasznalo: { Nev: req.body.felhasznalonev } }, secret, {
+      expiresIn: '1h',
+    });
+    res.cookie('token', token, { httpOnly: true });
+    return res.redirect('/index');
+  },
+);
+router.get('/logout', (req, res) => {
+  res.clearCookie('token');
+  res.redirect('/index');
+});
 export default router;

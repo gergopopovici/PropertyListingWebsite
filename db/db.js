@@ -184,3 +184,8 @@ export const getFelhasznaloEmail = async (email) => {
   const result = await pool.request().input('Email', email).query(query);
   return 'recordset' in result ? result.recordset : [];
 };
+export const getLogindData = async (req) => {
+  const query = 'SELECT * FROM Felhasznalo WHERE FelhasznaloNev = @FelhasznaloNev';
+  const result = await pool.request().input('FelhasznaloNev', req.body.felhasznalonev).query(query);
+  return 'recordset' in result ? result.recordset : [];
+};

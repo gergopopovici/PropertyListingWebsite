@@ -1,10 +1,12 @@
 import express from 'express';
 import { engine } from 'express-handlebars';
 import path from 'path';
+import cookieParser from 'cookie-parser';
 import requestRoutes from './routes/requests.js';
 
 const app = express();
 const uploadDir = path.join(process.cwd(), 'uploadDir');
+app.use(cookieParser());
 app.use(express.static(`${process.cwd()}/public`));
 app.use('/uploads', express.static(uploadDir));
 app.set('view engine', 'hbs');

@@ -1,6 +1,7 @@
 import express from 'express';
 import multer from 'multer';
 import path from 'path';
+import crypto from 'crypto';
 import { check, validationResult } from 'express-validator';
 import fs, { existsSync, mkdirSync } from 'fs';
 import * as db from '../db/db.js';
@@ -47,7 +48,7 @@ router.post(
 );
 router.post('/submit_form', express.urlencoded({ extended: true }), async (req, res) => {
   const hirdetesek = await db.getKeresettHirdetesek(req);
-  res.render('index', { hirdetesek });
+  res.render('index', { title: 'index', hirdetesek });
 });
 router.get('/tovabb', async (req, res) => {
   const { id } = req.query;
@@ -61,7 +62,7 @@ router.post('/submitpic_form', upload.single('kep'), async (req, res) => {
   if (beszurt === 1) {
     return res.redirect(`/tovabb?id=${req.body.adId}`);
   }
-  return res.status(500).render('kepfeltolt', { message: 'Hiba történt a kép feltöltése során' });
+  return res.status(500).render('kepfeltolt', { title: 'Képek', message: 'Hiba történt a kép feltöltése során' });
 });
 
 router.get('/hirdetes/:id', async (req, res) => {
@@ -101,4 +102,61 @@ router.get('/register', (req, res) => {
 router.get('/login', (req, res) => {
   res.render('bejelentkezes', { title: 'Bejelentkezés' });
 });
+router.post(
+  '/submitregistration_form',
+  express.urlencoded({ extended: true }),
+  [
+    check('felhasznalonev').isString().isLength({ min: 1 }).withMessage('Felhasználónév megadása kötelező!'),
+    check('jelszo').isString().isLength({ min: 1 }).withMessage('Jelszó megadása kötelező!'),
+    check('jelszo2').isString().isLength({ min: 1 }).withMessage('Jelszó megadása kötelező!'),
+    check('jelszo').custom((value, { req }) => {
+      if (value !== req.body.jelszo2) {
+        throw new Error('A két jelszó nem egyezik!');
+      }
+      return true;
+    }),
+    check('email').isEmail().withMessage('Érvényes email címet adjon meg!'),
+    check('felhasznalonev').custom(async (value) => {
+      const felhasznalo = await db.getFelhasznaloNev(value);
+      if (felhasznalo.length > 0) {
+        throw new Error('A felhasználónév foglalt!');
+      }
+      return true;
+    }),
+    check('email').custom(async (value) => {
+      const felhasznalo = await db.getFelhasznaloEmail(value);
+      if (felhasznalo.length > 0) {
+        throw new Error('Az email cím foglalt!');
+      }
+      return true;
+    }),
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      const errorMessages = errors.array().map((error) => error.msg);
+      return res
+        .status(500)
+        .render('regisztracio', { message: `Hiba történt a validálás során: ${errorMessages.join(', ')}` });
+    }
+    const hashSize = 30;
+    const saltSize = 30;
+    const hashAlgorithm = 'sha512';
+    const iterations = 1000;
+    const salt = crypto.randomBytes(saltSize);
+    const hash = await crypto.pbkdf2Sync(req.body.jelszo, salt, iterations, hashSize, hashAlgorithm);
+    const hashWithSalt = `${hash.toString('base64')}:${salt.toString('base64')}`;
+    const beszurt = await db.insertFelhasznalo(
+      req.body.nev,
+      req.body.felhasznalonev,
+      req.body.email,
+      hashWithSalt,
+      salt.toString('base64'),
+    );
+    if (beszurt === 1) {
+      return res.redirect('/login');
+    }
+    return res.status(500).render('regisztracio', { message: 'Hiba történt a beszurás során' });
+  },
+);
 export default router;

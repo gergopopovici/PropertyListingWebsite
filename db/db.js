@@ -51,6 +51,36 @@ await pool.query(
   END;`,
 );
 
+await pool.query(`
+  IF NOT EXISTS(
+    SELECT * FROM INFORMATION_SCHEMA.COLUMNS
+    WHERE TABLE_NAME = 'Felhasznalo' AND COLUMN_NAME = 'FelhasznaloNev'
+  )
+  BEGIN
+    ALTER TABLE Felhasznalo ADD FelhasznaloNev NVARCHAR(MAX)
+  END
+`);
+
+await pool.query(`
+  IF NOT EXISTS(
+    SELECT * FROM INFORMATION_SCHEMA.COLUMNS
+    WHERE TABLE_NAME = 'Felhasznalo' AND COLUMN_NAME = 'Jelszo'
+  )
+  BEGIN
+    ALTER TABLE Felhasznalo ADD Jelszo NVARCHAR(MAX)
+  END
+`);
+
+await pool.query(`
+  IF NOT EXISTS(
+    SELECT * FROM INFORMATION_SCHEMA.COLUMNS
+    WHERE TABLE_NAME = 'Felhasznalo' AND COLUMN_NAME = 'Salt'
+  )
+  BEGIN
+    ALTER TABLE Felhasznalo ADD Salt NVARCHAR(MAX)
+  END
+`);
+
 export const insertHirdetes = (req) => {
   const query =
     'INSERT INTO Hirdetes (FelhasznaloID,Varos, Kerulet,Felszinterulet,Ar,Szobak,Datum) VALUES (@FelhasznaloID,@Varos, @Kerulet,@Felszinterulet,@Ar,@Szobak,@Datum)';
@@ -128,5 +158,29 @@ export const deletePic = async (id) => {
 export const getPicById = async (id) => {
   const query = 'SELECT Fajlnev FROM Fenykep WHERE FenykepID = @FenykepID';
   const result = await pool.request().input('FenykepID', id).query(query);
+  return 'recordset' in result ? result.recordset : [];
+};
+
+export const insertFelhasznalo = (nev, felhasznalonev, email, jelszo, salt) => {
+  const query =
+    'INSERT INTO Felhasznalo (Nev,Email,Jelszo,Salt,FelhasznaloNev) VALUES (@Nev,@Email,@Jelszo,@Salt,@FelhasznaloNev)';
+  return pool
+    .request()
+    .input('Nev', nev)
+    .input('Email', email)
+    .input('Jelszo', jelszo)
+    .input('Salt', salt)
+    .input('FelhasznaloNev', felhasznalonev)
+    .query(query)
+    .then(() => 1);
+};
+export const getFelhasznaloNev = async (felhasznaloNev) => {
+  const query = 'SELECT FelhasznaloNev FROM Felhasznalo WHERE FelhasznaloNev = @FelhasznaloNev';
+  const result = await pool.request().input('FelhasznaloNev', felhasznaloNev).query(query);
+  return 'recordset' in result ? result.recordset : [];
+};
+export const getFelhasznaloEmail = async (email) => {
+  const query = 'SELECT Email FROM Felhasznalo WHERE Email = @Email';
+  const result = await pool.request().input('Email', email).query(query);
   return 'recordset' in result ? result.recordset : [];
 };

@@ -208,7 +208,7 @@ if (clearKepButton) {
   deleteKepElements.forEach((deleteKepElement) => {
     deleteKepElement.addEventListener('click', (event) => {
       const id = event.target.getAttribute('kep-id');
-      fetch(`/kep/${id}`, { method: 'DELETE' })
+      fetch(`/post/kep/${id}`, { method: 'DELETE' })
         .then((res) => {
           if (!res.ok) {
             throw new Error('Hiba történt a kérés során');

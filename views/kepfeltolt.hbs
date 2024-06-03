@@ -1,6 +1,6 @@
 <body>
     <nav>
-      <img class='logo' src='houseicon.png' alt='logo' />
+      <img class='logo' src='/houseicon.png' alt='logo' />
       <a href='/index'>Főoldal</a>
       {{> login}}
     </nav>
@@ -26,7 +26,7 @@
     </div>
     <div class='kepfeltolt'>
       {{#each hirdetes}}
-        <form action='submitpic_form' method='POST' enctype='multipart/form-data'>
+        <form action='/post/submitpic_form' method='POST' enctype='multipart/form-data'>
           <input type='hidden' id='adId' name='adId' value='{{this.HirdetesID}}' />
           <label for='kep'>Kép:</label>
           <input type='file' id='kep' name='kep' />

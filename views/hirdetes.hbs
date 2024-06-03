@@ -1,11 +1,11 @@
 <body>
     <nav>
-      <img class="logo" src="houseicon.png" alt="logo">
+      <img class="logo" src="/houseicon.png" alt="logo">
       <a href="/index">Főoldal</a>
       {{> login}}
     </nav>
     <div class="hirdetes">
-      <form action="/submitannouncement_form" method="POST">
+      <form action="/post/submitannouncement_form" method="POST">
         <label for="felhasznalok">Felhasználó:</label>
         <select id="felhasznalok" name="felhasznalo">
           {{#each felhasznalok}}

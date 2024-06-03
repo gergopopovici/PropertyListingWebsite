@@ -1,10 +1,13 @@
     <nav>
-      <img class='logo' src='houseicon.png' alt='logo' />
-      <a href='/hirdetes'>Hirdetés</a>
+      <img class='logo' src='/houseicon.png' alt='logo' />
       {{> login}}
+      <a href='/hirdetes'>Hirdetés</a>
+      {{#if vissza}}
+        <a href="/index">Vissza</a>
+      {{/if}}
     </nav>
     <div class='kereso'>
-      <form action='submit_form' method='POST'>
+      <form action='/post/submit_form' method='POST'>
         <label for='varos'>Város:</label>
         <input type='text' id='varos' name='varos' placeholder='Kolozsvár' />
         <label for='kerulet'>Kerület:</label>

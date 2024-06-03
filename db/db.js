@@ -194,3 +194,12 @@ export const getFelhasznaloID = async (felhasznaloNev) => {
   const result = await pool.request().input('FelhasznaloNev', felhasznaloNev).query(query);
   return 'recordset' in result ? result.recordset : [];
 };
+export const checkFelhasznaloOwner = async (felhasznaloID, hirdetesID) => {
+  const query = 'SELECT * FROM Hirdetes WHERE FelhasznaloID = @FelhasznaloID AND HirdetesID = @HirdetesID';
+  const result = await pool
+    .request()
+    .input('FelhasznaloID', felhasznaloID)
+    .input('HirdetesID', hirdetesID)
+    .query(query);
+  return 'recordset' in result ? result.recordset : [];
+};

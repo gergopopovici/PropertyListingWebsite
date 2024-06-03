@@ -36,18 +36,48 @@ router.get(['/', '/index'], async (req, res) => {
 });
 router.get(['/hirdetes'], checkAuth, (req, res) => {
   const { loginToken } = req.cookies;
+  let decoded;
   if (loginToken) {
-    const decoded = jwt.verify(loginToken, secret);
-    const { felhasznalo } = decoded;
-    return res.render('hirdetes', { title: 'hirdetés', felhasznalo });
+    try {
+      decoded = jwt.verify(loginToken, secret);
+      const { felhasznalo } = decoded;
+      return res.render('hirdetes', { title: 'hirdetes', felhasznalo });
+    } catch (err) {
+      if (err.name === 'TokenExpiredError') {
+        res.cookie('loginToken', '', { expires: new Date(0) });
+        return res.redirect('/index');
+      }
+    }
   }
   return res.render('hirdetes', { title: 'hirdetés' });
 });
 router.get('/tovabb', async (req, res) => {
+  const { loginToken } = req.cookies;
   const { id } = req.query;
+  let decoded;
+  let tulaj = false;
+  if (loginToken) {
+    try {
+      decoded = jwt.verify(loginToken, secret);
+      const { felhasznalo } = decoded;
+      const felhasznaloID = (await db.getFelhasznaloID(felhasznalo.Nev))[0].FelhasznaloID;
+      const ellenoriz = await db.checkFelhasznaloOwner(felhasznaloID, id);
+      if (ellenoriz.length > 0) {
+        tulaj = true;
+        const hirdetes = await db.getHirdetes(id);
+        const kepek = await db.getPic(id);
+        return res.render('kepfeltolt', { title: 'Képek', felhasznalo, hirdetes, kepek, tulaj });
+      }
+    } catch (err) {
+      if (err.name === 'TokenExpiredError') {
+        res.cookie('loginToken', '', { expires: new Date(0) });
+        return res.redirect('/index');
+      }
+    }
+  }
   const hirdetes = await db.getHirdetes(id);
   const kepek = await db.getPic(id);
-  res.render('kepfeltolt', { title: 'Képek', hirdetes, kepek });
+  return res.render('kepfeltolt', { title: 'Képek', hirdetes, kepek, tulaj });
 });
 router.get('/hirdetes/:id', async (req, res) => {
   try {

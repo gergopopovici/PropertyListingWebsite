@@ -14,20 +14,34 @@ app.use('/uploads', express.static(uploadDir));
 app.use(cookieParser());
 app.use(checkAuth);
 router.get(['/', '/index'], async (req, res) => {
-  const { logintoken } = req.cookies;
-  if (logintoken) {
-    const decoded = jwt.verify(logintoken, secret);
-    const { felhasznalo } = decoded;
+  const { loginToken } = req.cookies;
+  let decoded;
+  if (loginToken) {
+    try {
+      decoded = jwt.verify(loginToken, secret);
+      const { felhasznalo } = decoded;
+      const hirdetesek = await db.getHirdetesek();
+      return res.render('index', { title: 'index', hirdetesek, felhasznalo });
+    } catch (err) {
+      if (err.name === 'TokenExpiredError') {
+        res.cookie('loginToken', '', { expires: new Date(0) });
+        return res.redirect('/index');
+      }
+    }
+  } else {
     const hirdetesek = await db.getHirdetesek();
-    console.log(felhasznalo.Nev);
-    return res.render('index', { title: 'index', hirdetesek, felhasznalo });
+    return res.render('index', { title: 'index', hirdetesek });
   }
-  const hirdetesek = await db.getHirdetesek();
-  return res.render('index', { title: 'index', hirdetesek });
+  return res.render('index', { title: 'index' });
 });
-router.get(['/hirdetes'], checkAuth, async (req, res) => {
-  const felhasznalo = await db.getFelhasznalok();
-  res.render('hirdetes', { title: 'hirdetés', felhasznalok: felhasznalo });
+router.get(['/hirdetes'], checkAuth, (req, res) => {
+  const { loginToken } = req.cookies;
+  if (loginToken) {
+    const decoded = jwt.verify(loginToken, secret);
+    const { felhasznalo } = decoded;
+    return res.render('hirdetes', { title: 'hirdetés', felhasznalo });
+  }
+  return res.render('hirdetes', { title: 'hirdetés' });
 });
 router.get('/tovabb', async (req, res) => {
   const { id } = req.query;
@@ -55,7 +69,7 @@ router.get('/login', (req, res) => {
   res.render('bejelentkezes', { title: 'Bejelentkezés' });
 });
 router.get('/logout', (req, res) => {
-  res.cookie('logintoken', '', { expires: new Date(0) });
+  res.cookie('loginToken', '', { expires: new Date(0) });
   res.redirect('/index');
 });
 export default router;

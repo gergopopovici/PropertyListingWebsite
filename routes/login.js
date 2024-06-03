@@ -93,7 +93,7 @@ router.post(
     const token = jwt.sign({ felhasznalo: { Nev: req.body.felhasznalonev } }, secret, {
       expiresIn: '10m',
     });
-    res.cookie('logintoken', token, { httpOnly: true });
+    res.cookie('loginToken', token, { httpOnly: true });
     return res.redirect('/index');
   },
 );

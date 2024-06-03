@@ -18,7 +18,7 @@ router.post(
   '/submitannouncement_form',
   express.urlencoded({ extended: true }),
   [
-    check('varos').isString().isLength({ min: 1 }).withMessage('Város megadása kötelező!'),
+    check('varos').isString().isLength({ min: 4 }).withMessage('Város megadása kötelező!'),
     check('kerulet').isString().isLength({ min: 1 }).withMessage('Kerület megadása kötelező!'),
     check('felszinterulet').isInt({ min: 10 }).withMessage('A felszínterület minimum 10m^2 kell legyen.'),
     check('ar').isInt({ min: 1 }).withMessage('Az ár értéke pozitív szám kell legyen.'),
@@ -30,7 +30,20 @@ router.post(
     if (!errors.isEmpty()) {
       return res.status(500).render('hirdetes', { message: `Hiba történt a validálás során${errors.array()}` });
     }
-    const beszurt = await db.insertHirdetes(req);
+    const felhasznaloNev = req.body.username;
+    const felhasznaloID = (await db.getFelhasznaloID(felhasznaloNev))[0].FelhasznaloID;
+    if (felhasznaloID.length === 0) {
+      return res.status(500).render('hirdetes', { message: 'Nem található felhasználó' });
+    }
+    const beszurt = await db.insertHirdetes(
+      felhasznaloID,
+      req.body.varos,
+      req.body.kerulet,
+      req.body.felszinterulet,
+      req.body.ar,
+      req.body.szobak,
+      req.body.datum,
+    );
     if (beszurt === 1) {
       return res.redirect('/index');
     }

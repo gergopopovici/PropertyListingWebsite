@@ -75,7 +75,7 @@ function checkFormHirdet() {
     alert('Adja meg a város nevét!');
     return false;
   }
-  if (/[^a-zA-Z]/.test(varos)) {
+  if (/[^a-zA-Z-]/.test(varos)) {
     alert('A város neve nem lehet szám!');
     return false;
   }

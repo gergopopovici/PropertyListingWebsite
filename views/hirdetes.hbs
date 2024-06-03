@@ -6,12 +6,7 @@
     </nav>
     <div class="hirdetes">
       <form action="/post/submitannouncement_form" method="POST">
-        <label for="felhasznalok">Felhasználó:</label>
-        <select id="felhasznalok" name="felhasznalo">
-          {{#each felhasznalok}}
-            <option value="{{this.FelhasznaloID}}">{{this.Nev}}</option>
-          {{/each}}
-        </select>
+        <input type="hidden"  id="username" name="username" value="{{felhasznalo.Nev}}">
         <label for="varos">Város:</label>
         <input type="text" id="varos" name="varos" placeholder="Kolozsvár">
         <label for="kerulet">Kerület:</label>

@@ -81,18 +81,18 @@ await pool.query(`
   END
 `);
 
-export const insertHirdetes = (req) => {
+export const insertHirdetes = (felhasznaloID, varos, kerulet, felszinterulet, ar, szobak, datum) => {
   const query =
     'INSERT INTO Hirdetes (FelhasznaloID,Varos, Kerulet,Felszinterulet,Ar,Szobak,Datum) VALUES (@FelhasznaloID,@Varos, @Kerulet,@Felszinterulet,@Ar,@Szobak,@Datum)';
   return pool
     .request()
-    .input('FelhasznaloID', req.body.felhasznalo)
-    .input('Varos', req.body.varos)
-    .input('Kerulet', req.body.kerulet)
-    .input('Felszinterulet', req.body.felszinterulet)
-    .input('Ar', req.body.ar)
-    .input('Szobak', req.body.szobak)
-    .input('Datum', req.body.datum)
+    .input('FelhasznaloID', felhasznaloID)
+    .input('Varos', varos)
+    .input('Kerulet', kerulet)
+    .input('Felszinterulet', felszinterulet)
+    .input('Ar', ar)
+    .input('Szobak', szobak)
+    .input('Datum', datum)
     .query(query)
     .then(() => 1);
 };
@@ -187,5 +187,10 @@ export const getFelhasznaloEmail = async (email) => {
 export const getLogindData = async (req) => {
   const query = 'SELECT * FROM Felhasznalo WHERE FelhasznaloNev = @FelhasznaloNev';
   const result = await pool.request().input('FelhasznaloNev', req.body.felhasznalonev).query(query);
+  return 'recordset' in result ? result.recordset : [];
+};
+export const getFelhasznaloID = async (felhasznaloNev) => {
+  const query = 'SELECT FelhasznaloID FROM Felhasznalo WHERE FelhasznaloNev = @FelhasznaloNev';
+  const result = await pool.request().input('FelhasznaloNev', felhasznaloNev).query(query);
   return 'recordset' in result ? result.recordset : [];
 };

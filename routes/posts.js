@@ -4,9 +4,11 @@ import path from 'path';
 import { check, validationResult } from 'express-validator';
 import fs, { existsSync, mkdirSync } from 'fs';
 import * as db from '../db/db.js';
+import verifyToken from '../middleware/verifyToken.js';
 
 const app = express();
 app.use(express.json());
+app.use(verifyToken);
 const uploadDir = path.join(process.cwd(), 'uploadDir');
 const router = express.Router();
 if (!existsSync(uploadDir)) {
@@ -50,9 +52,9 @@ router.post(
     return res.status(500).render('hirdetes', { message: 'Hiba történt a beszurás során' });
   },
 );
-router.post('/submit_form', express.urlencoded({ extended: true }), async (req, res) => {
+router.post('/submit_form', verifyToken, express.urlencoded({ extended: true }), async (req, res) => {
   const hirdetesek = await db.getKeresettHirdetesek(req);
-  res.render('index', { title: 'index', hirdetesek, vissza: true });
+  res.render('index', { title: 'index', hirdetesek, felhasznalo: req.felhasznalo, vissza: true });
 });
 router.post('/submitpic_form', upload.single('kep'), async (req, res) => {
   const beszurt = await db.insertPic(req);

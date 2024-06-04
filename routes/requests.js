@@ -4,6 +4,7 @@ import jwt from 'jsonwebtoken';
 import cookieParser from 'cookie-parser';
 import * as db from '../db/db.js';
 import checkAuth from '../middleware/checkauth.js';
+import verifyToken from '../middleware/verifyToken.js';
 
 const app = express();
 app.use(express.json());
@@ -13,44 +14,12 @@ const secret = '92e001516475925247579858f731b6c65f178002bbb93c12cf3b09afeaceeca6
 app.use('/uploads', express.static(uploadDir));
 app.use(cookieParser());
 app.use(checkAuth);
-router.get(['/', '/index'], async (req, res) => {
-  const { loginToken } = req.cookies;
-  let decoded;
-  if (loginToken) {
-    try {
-      decoded = jwt.verify(loginToken, secret);
-      const { felhasznalo } = decoded;
-      const hirdetesek = await db.getHirdetesek();
-      return res.render('index', { title: 'index', hirdetesek, felhasznalo });
-    } catch (err) {
-      if (err.name === 'TokenExpiredError') {
-        res.cookie('loginToken', '', { expires: new Date(0) });
-        return res.redirect('/index');
-      }
-    }
-  } else {
-    const hirdetesek = await db.getHirdetesek();
-    return res.render('index', { title: 'index', hirdetesek });
-  }
-  return res.render('index', { title: 'index' });
+app.use(verifyToken);
+router.get(['/', '/index'], verifyToken, async (req, res) => {
+  const hirdetesek = await db.getHirdetesek();
+  res.render('index', { title: 'index', hirdetesek, felhasznalo: req.felhasznalo });
 });
-router.get(['/hirdetes'], checkAuth, (req, res) => {
-  const { loginToken } = req.cookies;
-  let decoded;
-  if (loginToken) {
-    try {
-      decoded = jwt.verify(loginToken, secret);
-      const { felhasznalo } = decoded;
-      return res.render('hirdetes', { title: 'hirdetes', felhasznalo });
-    } catch (err) {
-      if (err.name === 'TokenExpiredError') {
-        res.cookie('loginToken', '', { expires: new Date(0) });
-        return res.redirect('/index');
-      }
-    }
-  }
-  return res.render('hirdetes', { title: 'hirdetés' });
-});
+router.get(['/hirdetes'], verifyToken, checkAuth, (req, res) => res.render('hirdetes', { title: 'hirdetés' }));
 router.get('/tovabb', async (req, res) => {
   const { loginToken } = req.cookies;
   const { id } = req.query;

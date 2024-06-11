@@ -71,7 +71,6 @@ router.delete('/kep/:id', verifyToken, checkOwnerPic, async (req, res) => {
   try {
     const { id } = req.params;
     const kep = await db.getPicById(id);
-    console.log(kep);
     if (!kep || kep.length === 0) {
       return res.status(404).json({ message: 'Kép nem található' });
     }

@@ -19,7 +19,9 @@ router.get(['/', '/index'], verifyToken, async (req, res) => {
   const hirdetesek = await db.getHirdetesek();
   res.render('index', { title: 'index', hirdetesek, felhasznalo: req.felhasznalo });
 });
-router.get(['/hirdetes'], verifyToken, checkAuth, (req, res) => res.render('hirdetes', { title: 'hirdetés' }));
+router.get(['/hirdetes'], checkAuth, verifyToken, (req, res) =>
+  res.render('hirdetes', { title: 'hirdetés', felhasznalo: req.felhasznalo }),
+);
 router.get('/tovabb', async (req, res) => {
   const { loginToken } = req.cookies;
   const { id } = req.query;

@@ -41,7 +41,7 @@ router.post('/submitregistration_form', express.urlencoded({ extended: true }), 
 router.post('/submitlogin_form', express.urlencoded({ extended: true }), validateLogin, async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(500).render('bejelentkezes', { message: 'Hiba történt a validálás során' });
+    return res.status(400).render('bejelentkezes', { message: 'Hiba történt a validálás során' });
   }
   const felhasznalo = await db.getLogindData(req);
   if (felhasznalo.length === 0) {

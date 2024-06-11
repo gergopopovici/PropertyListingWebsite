@@ -203,3 +203,8 @@ export const checkFelhasznaloOwner = async (felhasznaloID, hirdetesID) => {
     .query(query);
   return 'recordset' in result ? result.recordset : [];
 };
+export const getHirdetesByPic = async (picID) => {
+  const query = 'SELECT HirdetesID FROM Fenykep WHERE FenykepID = @FenykepID';
+  const result = await pool.request().input('FenykepID', picID).query(query);
+  return 'recordset' in result ? result.recordset : [];
+};

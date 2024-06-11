@@ -1,6 +1,5 @@
 import express from 'express';
 import path from 'path';
-import jwt from 'jsonwebtoken';
 import cookieParser from 'cookie-parser';
 import * as db from '../db/db.js';
 import checkAuth from '../middleware/checkauth.js';
@@ -10,7 +9,6 @@ const app = express();
 app.use(express.json());
 const uploadDir = path.join(process.cwd(), 'uploadDir');
 const router = express.Router();
-const secret = '92e001516475925247579858f731b6c65f178002bbb93c12cf3b09afeaceeca6';
 app.use('/uploads', express.static(uploadDir));
 app.use(cookieParser());
 app.use(checkAuth);
@@ -22,33 +20,19 @@ router.get(['/', '/index'], verifyToken, async (req, res) => {
 router.get(['/hirdetes'], checkAuth, verifyToken, (req, res) =>
   res.render('hirdetes', { title: 'hirdetés', felhasznalo: req.felhasznalo }),
 );
-router.get('/tovabb', async (req, res) => {
-  const { loginToken } = req.cookies;
+router.get('/tovabb', verifyToken, async (req, res) => {
   const { id } = req.query;
-  let decoded;
   let tulaj = false;
-  if (loginToken) {
-    try {
-      decoded = jwt.verify(loginToken, secret);
-      const { felhasznalo } = decoded;
-      const felhasznaloID = (await db.getFelhasznaloID(felhasznalo.Nev))[0].FelhasznaloID;
-      const ellenoriz = await db.checkFelhasznaloOwner(felhasznaloID, id);
-      if (ellenoriz.length > 0) {
-        tulaj = true;
-        const hirdetes = await db.getHirdetes(id);
-        const kepek = await db.getPic(id);
-        return res.render('kepfeltolt', { title: 'Képek', felhasznalo, hirdetes, kepek, tulaj });
-      }
-    } catch (err) {
-      if (err.name === 'TokenExpiredError') {
-        res.cookie('loginToken', '', { expires: new Date(0) });
-        return res.redirect('/index');
-      }
+  if (req.felhasznalo) {
+    const hirdetes = await db.getHirdetes(id);
+    const felhasznaloID = (await db.getFelhasznaloID(req.felhasznalo.Nev))[0].FelhasznaloID;
+    if (hirdetes[0].FelhasznaloID === felhasznaloID) {
+      tulaj = true;
     }
   }
   const hirdetes = await db.getHirdetes(id);
   const kepek = await db.getPic(id);
-  return res.render('kepfeltolt', { title: 'Képek', hirdetes, kepek, tulaj });
+  return res.render('kepfeltolt', { title: 'Képek', hirdetes, kepek, tulaj, felhasznalo: req.felhasznalo });
 });
 router.get('/hirdetes/:id', async (req, res) => {
   try {

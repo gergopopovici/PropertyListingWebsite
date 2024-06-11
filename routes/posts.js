@@ -5,10 +5,14 @@ import { check, validationResult } from 'express-validator';
 import fs, { existsSync, mkdirSync } from 'fs';
 import * as db from '../db/db.js';
 import verifyToken from '../middleware/verifyToken.js';
+import checkOwner from '../middleware/checkOwner.js';
+import checkOwnerPic from '../middleware/checkOwnerPic.js';
 
 const app = express();
 app.use(express.json());
 app.use(verifyToken);
+app.use(checkOwner);
+app.use(checkOwnerPic);
 const uploadDir = path.join(process.cwd(), 'uploadDir');
 const router = express.Router();
 if (!existsSync(uploadDir)) {
@@ -56,17 +60,18 @@ router.post('/submit_form', verifyToken, express.urlencoded({ extended: true }),
   const hirdetesek = await db.getKeresettHirdetesek(req);
   res.render('index', { title: 'index', hirdetesek, felhasznalo: req.felhasznalo, vissza: true });
 });
-router.post('/submitpic_form', upload.single('kep'), async (req, res) => {
+router.post('/submitpic_form', verifyToken, upload.single('kep'), checkOwner, async (req, res) => {
   const beszurt = await db.insertPic(req);
   if (beszurt === 1) {
     return res.redirect(`/tovabb?id=${req.body.adId}`);
   }
   return res.status(500).render('kepfeltolt', { title: 'Képek', message: 'Hiba történt a kép feltöltése során' });
 });
-router.delete('/kep/:id', async (req, res) => {
+router.delete('/kep/:id', verifyToken, checkOwnerPic, async (req, res) => {
   try {
     const { id } = req.params;
     const kep = await db.getPicById(id);
+    console.log(kep);
     if (!kep || kep.length === 0) {
       return res.status(404).json({ message: 'Kép nem található' });
     }

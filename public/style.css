@@ -58,3 +58,13 @@ div#keresettElemek {
 .kepek-tarolo {
   display: flex;
 }
+button {
+  background-color: red;
+  color: white;
+  padding: 14px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  border-radius: 10px;
+  transition: background-color 0.3s;
+}

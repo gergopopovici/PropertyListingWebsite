@@ -15,7 +15,31 @@ function clearHirdet() {
   document.getElementById('szobak').value = '';
   document.getElementById('datum').value = '';
 }
+function clearLogin() {
+  document.getElementById('felhasznalonev').value = '';
+  document.getElementById('jelszo').value = '';
+}
+function clearRegisterForm() {
+  document.getElementById('felhasznalonev').value = '';
+  document.getElementById('jelszo').value = '';
+  document.getElementById('email').value = '';
+  document.getElementById('nev').value = '';
+  document.getElementById('jelszo2').value = '';
+}
 
+function checkFormLogin() {
+  const felhasznalonev = document.getElementById('felhasznalonev').value;
+  const jelszo = document.getElementById('jelszo').value;
+  if (felhasznalonev === '') {
+    alert('Adja meg a felhasználónevet!');
+    return false;
+  }
+  if (jelszo === '') {
+    alert('Adja meg a jelszót!');
+    return false;
+  }
+  return true;
+}
 function checkFormKep() {
   const adId = document.getElementById('adId').value;
   const image = document.getElementById('kep').value;
@@ -51,7 +75,7 @@ function checkFormHirdet() {
     alert('Adja meg a város nevét!');
     return false;
   }
-  if (/[^a-zA-Z]/.test(varos)) {
+  if (/[^a-zA-Z-]/.test(varos)) {
     alert('A város neve nem lehet szám!');
     return false;
   }
@@ -95,6 +119,39 @@ function checkFormHirdet() {
   return true;
 }
 
+function checkFormRegister() {
+  const felhasznalonev = document.getElementById('felhasznalonev').value;
+  const jelszo = document.getElementById('jelszo').value;
+  const email = document.getElementById('email').value;
+  const nev = document.getElementById('nev').value;
+  const jelszo2 = document.getElementById('jelszo2').value;
+  if (nev === '') {
+    alert('Adja meg a nevet!');
+    return false;
+  }
+  if (felhasznalonev === '') {
+    alert('Adja meg a felhasználónevet!');
+    return false;
+  }
+  if (email === '') {
+    alert('Adja meg az email címet!');
+    return false;
+  }
+  if (jelszo === '') {
+    alert('Adja meg a jelszót!');
+    return false;
+  }
+  if (jelszo2 === '') {
+    alert('Adja meg a jelszót mégegyszer!');
+    return false;
+  }
+  if (jelszo !== jelszo2) {
+    alert('A két jelszó nem egyezik!');
+    return false;
+  }
+  return true;
+}
+
 function moreInfo(data, moreInformation) {
   while (moreInformation.firstChild) {
     moreInformation.removeChild(moreInformation.firstChild);
@@ -112,11 +169,17 @@ const clearKepButton = document.getElementById('clear-kep');
 const clearHirdetButton = document.getElementById('clear-hirdet');
 const submitButtonKep = document.getElementById('feltolt');
 const submitButtonHirdet = document.getElementById('hirdet');
+const sorElements = document.querySelectorAll('.sor');
+const deleteKepElements = document.querySelectorAll('.delete-kep');
+const deleteLogin = document.getElementById('clear-bejelentkezes');
+const submitLogin = document.getElementById('bejelentkezes');
+const submitRegister = document.getElementById('regisztracio');
+const clearRegister = document.getElementById('clear-regisztracio');
 
 if (clearButton) {
   clearButton.addEventListener('click', clearIndex);
-  document.addEventListener('click', (event) => {
-    if (event.target.matches('.sor')) {
+  sorElements.forEach((sorElement) => {
+    sorElement.addEventListener('click', (event) => {
       let { target } = event;
       while (target != null && !target.classList.contains('hirdetes')) {
         target = target.parentElement;
@@ -135,17 +198,17 @@ if (clearButton) {
         })
         .catch((err) => {
           console.error(err);
-          alert('hiba történt a kérés során');
+          alert('Hiba történt a kérés során');
         });
-    }
+    });
   });
 }
 if (clearKepButton) {
   clearKepButton.addEventListener('click', clearKep);
-  document.addEventListener('click', (event) => {
-    if (event.target.matches('.delete-kep')) {
+  deleteKepElements.forEach((deleteKepElement) => {
+    deleteKepElement.addEventListener('click', (event) => {
       const id = event.target.getAttribute('kep-id');
-      fetch(`/kep/${id}`, { method: 'DELETE' })
+      fetch(`/post/kep/${id}`, { method: 'DELETE' })
         .then((res) => {
           if (!res.ok) {
             throw new Error('Hiba történt a kérés során');
@@ -159,7 +222,7 @@ if (clearKepButton) {
           console.error(err);
           alert('hiba történt a kérés során');
         });
-    }
+    });
   });
 }
 if (clearHirdetButton) {
@@ -179,4 +242,25 @@ if (submitButtonHirdet) {
       event.preventDefault();
     }
   });
+}
+if (deleteLogin) {
+  deleteLogin.addEventListener('click', clearLogin);
+}
+if (submitLogin) {
+  submitLogin.addEventListener('click', (event) => {
+    if (!checkFormLogin()) {
+      event.preventDefault();
+    }
+  });
+}
+
+if (submitRegister) {
+  submitRegister.addEventListener('click', (event) => {
+    if (!checkFormRegister()) {
+      event.preventDefault();
+    }
+  });
+}
+if (clearRegister) {
+  clearRegister.addEventListener('click', clearRegisterForm);
 }

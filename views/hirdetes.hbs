@@ -1,23 +1,12 @@
-<!DOCTYPE html>
-<html lang="hu">
-  <head>
-    <meta charset="UTF-8">
-    <link rel="stylesheet" href="style.css">
-    <title>Hirdetés</title>
-  </head>
-  <body>
+<body>
     <nav>
-      <img class="logo" src="houseicon.png" alt="logo">
+      <img class="logo" src="/houseicon.png" alt="logo">
       <a href="/index">Főoldal</a>
+      {{> login}}
     </nav>
     <div class="hirdetes">
-      <form action="/submitannouncement_form" method="POST">
-        <label for="felhasznalok">Felhasználó:</label>
-        <select id="felhasznalok" name="felhasznalo">
-          {{#each felhasznalok}}
-            <option value="{{this.FelhasznaloID}}">{{this.Nev}}</option>
-          {{/each}}
-        </select>
+      <form action="/post/submitannouncement_form" method="POST">
+        <input type="hidden"  id="username" name="username" value="{{felhasznalo.Nev}}">
         <label for="varos">Város:</label>
         <input type="text" id="varos" name="varos" placeholder="Kolozsvár">
         <label for="kerulet">Kerület:</label>
@@ -37,5 +26,4 @@
     </div>
     <footer>Popovici Gergo-Benone <br> pgim2289 <br>523 <br> </footer>
     <script src="script.js"></script>
-  </body>
-</html>
+</body>

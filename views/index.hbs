@@ -1,16 +1,13 @@
-<html lang='hu'>
-  <head>
-    <meta charset='UTF-8' />
-    <link rel='stylesheet' href='style.css' />
-    <title>Index</title>
-  </head>
-  <body>
     <nav>
-      <img class='logo' src='houseicon.png' alt='logo' />
+      <img class='logo' src='/houseicon.png' alt='logo' />
+      {{> login}}
       <a href='/hirdetes'>Hirdetés</a>
+      {{#if vissza}}
+        <a href="/index">Vissza</a>
+      {{/if}}
     </nav>
     <div class='kereso'>
-      <form action='submit_form' method='POST'>
+      <form action='/post/submit_form' method='POST'>
         <label for='varos'>Város:</label>
         <input type='text' id='varos' name='varos' placeholder='Kolozsvár' />
         <label for='kerulet'>Kerület:</label>
@@ -39,4 +36,3 @@
     <footer>Popovici Gergo-Benone<br />pgim2289<br />523<br /></footer>
     <script src='script.js'></script>
   </body>
-</html>

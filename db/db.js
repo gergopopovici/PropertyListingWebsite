@@ -11,11 +11,23 @@ const pool = await sql.connect({
   },
 });
 await pool.query(
+  `IF NOT EXISTS(SELECT * FROM sysobjects WHERE name='Csoport' and xtype='U')
+  CREATE TABLE Csoport(
+    CsoportID INT PRIMARY KEY IDENTITY(1,1),
+    CsoportNev NVARCHAR(MAX)
+  )`,
+);
+await pool.query(
   `IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='Felhasznalo' and xtype='U')
   CREATE TABLE Felhasznalo(  
   FelhasznaloID INT PRIMARY KEY IDENTITY(1,1),
-    Nev NVARCHAR(100), 
-    Email NVARCHAR(100)
+    Nev NVARCHAR(MAX), 
+    Email NVARCHAR(MAX),
+    FelhasznaloNev NVARCHAR(MAX),
+    Jelszo NVARCHAR(MAX),
+    Salt NVARCHAR(MAX),
+    CsoportID INT
+    FOREIGN KEY (CsoportID) REFERENCES Csoport(CsoportID)
 )`,
 );
 await pool.query(
@@ -43,44 +55,13 @@ await pool.query(
 );`,
 );
 await pool.query(
-  `IF NOT EXISTS (SELECT * FROM Felhasznalo)
+  `IF NOT EXISTS (SELECT * FROM Csoport)
   BEGIN
-    INSERT INTO Felhasznalo (Nev, Email) VALUES ('John Doe', 'john@example.com');
-    INSERT INTO Felhasznalo (Nev, Email) VALUES ('Jane Smith', 'jane@example.com');
-    INSERT INTO Felhasznalo (Nev, Email) VALUES ('Alice Johnson', 'alice@example.com');
+    INSERT INTO Csoport (CsoportNev) VALUES ('Admin');
+    INSERT INTO Csoport (CsoportNev) VALUES ('Felhasznalo');
+    INSERT INTO Csoport (CsoportNev) VALUES ('Vendeg');
   END;`,
 );
-
-await pool.query(`
-  IF NOT EXISTS(
-    SELECT * FROM INFORMATION_SCHEMA.COLUMNS
-    WHERE TABLE_NAME = 'Felhasznalo' AND COLUMN_NAME = 'FelhasznaloNev'
-  )
-  BEGIN
-    ALTER TABLE Felhasznalo ADD FelhasznaloNev NVARCHAR(MAX)
-  END
-`);
-
-await pool.query(`
-  IF NOT EXISTS(
-    SELECT * FROM INFORMATION_SCHEMA.COLUMNS
-    WHERE TABLE_NAME = 'Felhasznalo' AND COLUMN_NAME = 'Jelszo'
-  )
-  BEGIN
-    ALTER TABLE Felhasznalo ADD Jelszo NVARCHAR(MAX)
-  END
-`);
-
-await pool.query(`
-  IF NOT EXISTS(
-    SELECT * FROM INFORMATION_SCHEMA.COLUMNS
-    WHERE TABLE_NAME = 'Felhasznalo' AND COLUMN_NAME = 'Salt'
-  )
-  BEGIN
-    ALTER TABLE Felhasznalo ADD Salt NVARCHAR(MAX)
-  END
-`);
-
 export const insertHirdetes = (felhasznaloID, varos, kerulet, felszinterulet, ar, szobak, datum) => {
   const query =
     'INSERT INTO Hirdetes (FelhasznaloID,Varos, Kerulet,Felszinterulet,Ar,Szobak,Datum) VALUES (@FelhasznaloID,@Varos, @Kerulet,@Felszinterulet,@Ar,@Szobak,@Datum)';
@@ -206,5 +187,20 @@ export const checkFelhasznaloOwner = async (felhasznaloID, hirdetesID) => {
 export const getHirdetesByPic = async (picID) => {
   const query = 'SELECT HirdetesID FROM Fenykep WHERE FenykepID = @FenykepID';
   const result = await pool.request().input('FenykepID', picID).query(query);
+  return 'recordset' in result ? result.recordset : [];
+};
+export const upgradeAdmin = async (felhasznaloID) => {
+  const query = 'UPDATE Felhasznalo SET CsoportID = 1 WHERE FelhasznaloID = @FelhasznaloID';
+  const result = await pool.request().input('FelhasznaloID', felhasznaloID).query(query);
+  return result.rowsAffected[0] > 0;
+};
+export const downgradeAdmin = async (felhasznaloID) => {
+  const query = 'UPDATE Felhasznalo SET CsoportID = 2 WHERE FelhasznaloID = @FelhasznaloID';
+  const result = await pool.request().input('FelhasznaloID', felhasznaloID).query(query);
+  return result.rowsAffected[0] > 0;
+};
+export const checkAdmin = async (felhasznaloNev) => {
+  const query = 'SELECT * FROM Felhasznalo WHERE FelhasznaloNev = @FelhasznaloNev AND CsoportID = 1';
+  const result = await pool.request().input('FelhasznaloNev', felhasznaloNev).query(query);
   return 'recordset' in result ? result.recordset : [];
 };

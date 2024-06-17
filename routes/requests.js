@@ -2,9 +2,9 @@ import express from 'express';
 import path from 'path';
 import cookieParser from 'cookie-parser';
 import * as db from '../db/db.js';
-import checkAuth from '../middleware/checkauth.js';
+import checkAuth from '../middleware/checkAuth.js';
 import verifyToken from '../middleware/verifyToken.js';
-import checkAdmin from '../middleware/checkadmin.js';
+import checkAdmin from '../middleware/checkAdmin.js';
 
 const app = express();
 app.use(express.json());

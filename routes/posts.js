@@ -7,12 +7,14 @@ import * as db from '../db/db.js';
 import verifyToken from '../middleware/verifyToken.js';
 import checkOwner from '../middleware/checkOwner.js';
 import checkOwnerPic from '../middleware/checkOwnerPic.js';
+import checkAdmin from '../middleware/checkAdmin.js';
 
 const app = express();
 app.use(express.json());
 app.use(verifyToken);
 app.use(checkOwner);
 app.use(checkOwnerPic);
+app.use(checkAdmin);
 const uploadDir = path.join(process.cwd(), 'uploadDir');
 const router = express.Router();
 if (!existsSync(uploadDir)) {
@@ -108,5 +110,29 @@ router.post('/updateAdmin', express.json(), async (req, res) => {
     felhasznalo: req.felhasznalo,
     message: 'Hiba történt az upgrade során',
   });
+});
+router.delete('/hirdetesek/:id', verifyToken, checkAdmin, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const kepek = await db.getPic(id);
+    if (kepek.length > 0) {
+      kepek.forEach((kep) => {
+        const toroltKep = db.deletePic(kep.FenykepID);
+        if (!toroltKep) {
+          return res.status(500).json({ message: 'A kép törlése nem sikerült' });
+        }
+        fs.unlinkSync(path.join(uploadDir, kep.Fajlnev));
+        return 2;
+      });
+    }
+    const torolt = await db.deleteHirdetes(id);
+    if (torolt) {
+      return res.status(200).end();
+    }
+    return res.status(500).json({ message: 'A hirdetés törlése nem sikerült' });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: 'Szerverhiba' });
+  }
 });
 export default router;

@@ -204,3 +204,8 @@ export const checkAdmin = async (felhasznaloNev) => {
   const result = await pool.request().input('FelhasznaloNev', felhasznaloNev).query(query);
   return 'recordset' in result ? result.recordset : [];
 };
+export const deleteHirdetes = async (id) => {
+  const query = 'DELETE FROM Hirdetes WHERE HirdetesID = @HirdetesID';
+  const result = await pool.request().input('HirdetesID', id).query(query);
+  return result.rowsAffected[0] > 0;
+};

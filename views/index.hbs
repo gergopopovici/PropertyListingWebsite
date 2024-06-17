@@ -26,6 +26,9 @@
     <div id='nagy-div'>
       {{#each hirdetesek}}
         <div class='hirdetes' hirdetes-id='{{this.HirdetesID}}'>
+          {{#if ../admin}}
+           <button type='button' class='delete-hirdetes' hirdetes-id='{{this.HirdetesID}}'>Törlés</button>
+          {{/if}}
           <p class='sor'>{{this.Varos}} {{this.Kerulet}}</p>
           <p class='sor'>Felszinterulet:{{this.Felszinterulet}}</p>
           <p class='sor'>Ar:{{this.Ar}}</p>

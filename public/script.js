@@ -175,6 +175,7 @@ const deleteLogin = document.getElementById('clear-bejelentkezes');
 const submitLogin = document.getElementById('bejelentkezes');
 const submitRegister = document.getElementById('regisztracio');
 const clearRegister = document.getElementById('clear-regisztracio');
+const deleteHirdetes = document.querySelectorAll('.delete-hirdetes');
 
 if (clearButton) {
   clearButton.addEventListener('click', clearIndex);
@@ -278,5 +279,24 @@ document.querySelectorAll('.admin-checkbox').forEach((checkbox) => {
     if (!res.ok) {
       alert('Hiba történt az adminisztrálás során során');
     }
+  });
+});
+deleteHirdetes.forEach((deleteHirdet) => {
+  deleteHirdet.addEventListener('click', (event) => {
+    const id = event.target.getAttribute('hirdetes-id');
+    fetch(`/post/hirdetesek/${id}`, { method: 'DELETE' })
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error('Hiba történt a kérés során');
+        }
+        return res;
+      })
+      .then(() => {
+        event.target.parentElement.remove();
+      })
+      .catch((err) => {
+        console.error(err);
+        alert('hiba történt a kérés során');
+      });
   });
 });

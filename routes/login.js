@@ -16,7 +16,7 @@ router.post('/submitregistration_form', express.urlencoded({ extended: true }), 
   if (!errors.isEmpty()) {
     const errorMessages = errors.array().map((error) => error.msg);
     return res
-      .status(500)
+      .status(400)
       .render('regisztracio', { message: `Hiba történt a validálás során: ${errorMessages.join(', ')}` });
   }
   const hashSize = 30;

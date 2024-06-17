@@ -68,3 +68,13 @@ button {
   border-radius: 10px;
   transition: background-color 0.3s;
 }
+table {
+  margin-top: 20px;
+  border-collapse: collapse;
+  width: 100%;
+}
+th,
+td {
+  padding: 10px;
+  border: 1px solid black;
+}

@@ -4,6 +4,7 @@ import cookieParser from 'cookie-parser';
 import * as db from '../db/db.js';
 import checkAuth from '../middleware/checkauth.js';
 import verifyToken from '../middleware/verifyToken.js';
+import checkAdmin from '../middleware/checkadmin.js';
 
 const app = express();
 app.use(express.json());
@@ -13,9 +14,16 @@ app.use('/uploads', express.static(uploadDir));
 app.use(cookieParser());
 app.use(checkAuth);
 app.use(verifyToken);
+app.use(checkAdmin);
 router.get(['/', '/index'], verifyToken, async (req, res) => {
   const hirdetesek = await db.getHirdetesek();
-  res.render('index', { title: 'index', hirdetesek, felhasznalo: req.felhasznalo });
+  if (req.felhasznalo) {
+    const admin = await db.checkAdmin(req.felhasznalo.Nev);
+    if (admin.length > 0) {
+      return res.render('index', { title: 'index', hirdetesek, felhasznalo: req.felhasznalo, admin: true });
+    }
+  }
+  return res.render('index', { title: 'index', hirdetesek, felhasznalo: req.felhasznalo });
 });
 router.get(['/hirdetes'], checkAuth, verifyToken, (req, res) =>
   res.render('hirdetes', { title: 'hirdetés', felhasznalo: req.felhasznalo }),
@@ -56,5 +64,21 @@ router.get('/login', (req, res) => {
 router.get('/logout', (req, res) => {
   res.cookie('loginToken', '', { expires: new Date(0) });
   res.redirect('/index');
+});
+router.get('/adminisztralas', checkAuth, verifyToken, checkAdmin, async (req, res) => {
+  const felhasznalok = await db.getFelhasznalok();
+  const felhasznalokModositottCsoportID = felhasznalok.map((felhasznalo) => {
+    if (felhasznalo.CsoportID === 1) {
+      felhasznalo.CsoportID = true;
+      return felhasznalo;
+    }
+    felhasznalo.CsoportID = false;
+    return felhasznalo;
+  });
+  res.render('adminisztralas', {
+    title: 'Adminisztrálás',
+    felhasznalo: req.felhasznalo,
+    felhasznalok: felhasznalokModositottCsoportID,
+  });
 });
 export default router;

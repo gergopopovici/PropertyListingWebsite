@@ -264,3 +264,19 @@ if (submitRegister) {
 if (clearRegister) {
   clearRegister.addEventListener('click', clearRegisterForm);
 }
+document.querySelectorAll('.admin-checkbox').forEach((checkbox) => {
+  checkbox.addEventListener('change', async (event) => {
+    const felhasznaloID = event.target.getAttribute('adminCheckBoxID');
+    const csoportID = event.target.checked ? 1 : 2;
+    const res = await fetch('/post/updateAdmin', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ felhasznaloID, csoportID }),
+    });
+    if (!res.ok) {
+      alert('Hiba történt az adminisztrálás során során');
+    }
+  });
+});

@@ -85,4 +85,28 @@ router.delete('/kep/:id', verifyToken, checkOwnerPic, async (req, res) => {
     return res.status(500).json({ message: 'Szerverhiba' });
   }
 });
+router.post('/updateAdmin', express.json(), async (req, res) => {
+  const { felhasznaloID } = req.body;
+  const { csoportID } = req.body;
+  if (csoportID === 2) {
+    const downgradeAdmin = await db.downgradeAdmin(felhasznaloID);
+    if (downgradeAdmin === true) {
+      return res.status(200).end();
+    }
+    return res.status(500).render('adminisztralas', {
+      title: 'Adminisztralas',
+      felhasznalo: req.felhasznalo,
+      message: 'Hiba történt a downgrade során',
+    });
+  }
+  const upgradeAdmin = await db.upgradeAdmin(felhasznaloID);
+  if (upgradeAdmin === false) {
+    return res.status(200).end();
+  }
+  return res.status(500).render('adminisztralas', {
+    title: 'Adminisztralas',
+    felhasznalo: req.felhasznalo,
+    message: 'Hiba történt az upgrade során',
+  });
+});
 export default router;

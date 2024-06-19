@@ -311,3 +311,6 @@ if (filterFelhasznalo) {
     });
   });
 }
+document.getElementById('logo').addEventListener('click', () => {
+  window.location.href = '/';
+});

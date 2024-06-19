@@ -8,6 +8,7 @@ import verifyToken from '../middleware/verifyToken.js';
 import checkOwner from '../middleware/checkOwner.js';
 import checkOwnerPic from '../middleware/checkOwnerPic.js';
 import checkAdmin from '../middleware/checkAdmin.js';
+import checkAuth from '../middleware/checkAuth.js';
 
 const app = express();
 app.use(express.json());
@@ -15,6 +16,7 @@ app.use(verifyToken);
 app.use(checkOwner);
 app.use(checkOwnerPic);
 app.use(checkAdmin);
+app.use(checkAuth);
 const uploadDir = path.join(process.cwd(), 'uploadDir');
 const router = express.Router();
 if (!existsSync(uploadDir)) {
@@ -24,6 +26,8 @@ app.use('/uploads', express.static(uploadDir));
 const upload = multer({ dest: uploadDir, limits: { fileSize: 5000000 } });
 router.post(
   '/submitannouncement_form',
+  checkAuth,
+  verifyToken,
   express.urlencoded({ extended: true }),
   [
     check('varos').isString().isLength({ min: 4 }).withMessage('Város megadása kötelező!'),
@@ -36,12 +40,15 @@ router.post(
   async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(500).render('hirdetes', { message: `Hiba történt a validálás során${errors.array()}` });
+      return res.status(500).render('hirdetes', {
+        felhasznalo: req.felhasznalo,
+        message: `Hiba történt a validálás során${errors.array()}`,
+      });
     }
     const felhasznaloNev = req.body.username;
     const felhasznaloID = (await db.getFelhasznaloID(felhasznaloNev))[0].FelhasznaloID;
     if (felhasznaloID.length === 0) {
-      return res.status(500).render('hirdetes', { message: 'Nem található felhasználó' });
+      return res.status(500).render('hirdetes', { felhasznalo: req.felhasznalo, message: 'Nem található felhasználó' });
     }
     const beszurt = await db.insertHirdetes(
       felhasznaloID,
@@ -55,7 +62,9 @@ router.post(
     if (beszurt === 1) {
       return res.redirect('/index');
     }
-    return res.status(500).render('hirdetes', { message: 'Hiba történt a beszurás során' });
+    return res
+      .status(500)
+      .render('hirdetes', { felhasznalo: req.felhasznalo, message: 'Hiba történt a beszurás során' });
   },
 );
 router.post('/submit_form', verifyToken, express.urlencoded({ extended: true }), async (req, res) => {
@@ -67,7 +76,11 @@ router.post('/submitpic_form', verifyToken, upload.single('kep'), checkOwner, as
   if (beszurt === 1) {
     return res.redirect(`/tovabb?id=${req.body.adId}`);
   }
-  return res.status(500).render('kepfeltolt', { title: 'Képek', message: 'Hiba történt a kép feltöltése során' });
+  return res.status(500).render('kepfeltolt', {
+    title: 'Képek',
+    message: 'Hiba történt a kép feltöltése során',
+    felhasznalo: req.felhasznalo,
+  });
 });
 router.delete('/kep/:id', verifyToken, checkOwnerPic, async (req, res) => {
   try {
@@ -135,4 +148,45 @@ router.delete('/hirdetesek/:id', verifyToken, checkAdmin, async (req, res) => {
     return res.status(500).json({ message: 'Szerverhiba' });
   }
 });
+router.post(
+  '/submit_message/',
+  checkAuth,
+  verifyToken,
+  express.urlencoded({ extended: true }),
+  [
+    check('uzenet').isString().isLength({ min: 1 }).withMessage('Az üzenet nem lehet üres'),
+    check('felhasznaloValaszto').isInt().withMessage('A címzett nem található'),
+  ],
+  async (req, res) => {
+    let felhasznalok = await db.getFelhasznalok();
+    felhasznalok = felhasznalok.filter((felhasznalo) => felhasznalo.FelhasznaloNev !== req.felhasznalo.Nev);
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(500).render('uzenetek', {
+        felhasznalo: req.felhasznalo,
+        felhasznalok,
+        message: 'Hiba a validalas soran!',
+      });
+    }
+    const feladoNev = req.body.felhasznaloNev;
+    const feladoID = (await db.getFelhasznaloID(feladoNev))[0].FelhasznaloID;
+    if (feladoID.length === 0) {
+      return res
+        .status(500)
+        .render('uzenetek', { felhasznalo: req.felhasznalo, felhasznalok, message: 'Nem található felhasználó' });
+    }
+    const { felhasznaloValaszto } = req.body;
+    let { uzenet } = req.body;
+    uzenet = `${req.felhasznalo.Nev}: ${uzenet}`;
+    const beszurt = await db.uzenetBeszuras(feladoID, felhasznaloValaszto, uzenet);
+    if (beszurt === 1) {
+      return res
+        .status(200)
+        .render('uzenetek', { felhasznalo: req.felhasznalo, felhasznalok, message: 'Az üzenet el lett küldve!' });
+    }
+    return res
+      .status(500)
+      .render('uzenetek', { felhasznalo: req.felhasznalo, felhasznalok, message: 'Az üzenet nem lett küldve!' });
+  },
+);
 export default router;

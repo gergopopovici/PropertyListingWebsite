@@ -26,7 +26,19 @@ function clearRegisterForm() {
   document.getElementById('nev').value = '';
   document.getElementById('jelszo2').value = '';
 }
-
+function checkFormUzenet() {
+  const cimzet = document.getElementById('felhasznaloValaszto').value;
+  const uzenet = document.getElementById('uzenet').value;
+  if (cimzet === '') {
+    alert('Válasszon címzettet!');
+    return false;
+  }
+  if (uzenet === '') {
+    alert('Írjon üzenetet!');
+    return false;
+  }
+  return true;
+}
 function checkFormLogin() {
   const felhasznalonev = document.getElementById('felhasznalonev').value;
   const jelszo = document.getElementById('jelszo').value;
@@ -177,7 +189,7 @@ const submitRegister = document.getElementById('regisztracio');
 const clearRegister = document.getElementById('clear-regisztracio');
 const deleteHirdetes = document.querySelectorAll('.delete-hirdetes');
 const filterFelhasznalo = document.getElementById('kereses');
-
+const uzenetKuldes = document.getElementById('uzenetkuld');
 if (clearButton) {
   clearButton.addEventListener('click', clearIndex);
   sorElements.forEach((sorElement) => {
@@ -265,6 +277,13 @@ if (submitRegister) {
 }
 if (clearRegister) {
   clearRegister.addEventListener('click', clearRegisterForm);
+}
+if (uzenetKuldes) {
+  uzenetKuldes.addEventListener('click', (event) => {
+    if (!checkFormUzenet()) {
+      event.preventDefault();
+    }
+  });
 }
 document.querySelectorAll('.admin-checkbox').forEach((checkbox) => {
   checkbox.addEventListener('change', async (event) => {

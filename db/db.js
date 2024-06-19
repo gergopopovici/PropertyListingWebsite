@@ -222,3 +222,17 @@ export const deleteHirdetes = async (id) => {
   const result = await pool.request().input('HirdetesID', id).query(query);
   return result.rowsAffected[0] > 0;
 };
+export const uzenetBeszuras = (feladoID, cimzettID, uzenet) => {
+  const date = new Date();
+  const query =
+    'INSERT INTO Uzenetek (FeladoID,CimzettID,Uzenet,Datum,Olvasva) VALUES (@FeladoID,@CimzettID,@Uzenet,@Datum,@Olvasva)';
+  return pool
+    .request()
+    .input('FeladoID', feladoID)
+    .input('CimzettID', cimzettID)
+    .input('Uzenet', uzenet)
+    .input('Datum', date)
+    .input('Olvasva', 0)
+    .query(query)
+    .then(() => 1);
+};

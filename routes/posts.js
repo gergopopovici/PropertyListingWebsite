@@ -102,7 +102,7 @@ router.post('/updateAdmin', express.json(), async (req, res) => {
     });
   }
   const upgradeAdmin = await db.upgradeAdmin(felhasznaloID);
-  if (upgradeAdmin === false) {
+  if (upgradeAdmin === true) {
     return res.status(200).end();
   }
   return res.status(500).render('adminisztralas', {

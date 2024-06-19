@@ -176,6 +176,7 @@ const submitLogin = document.getElementById('bejelentkezes');
 const submitRegister = document.getElementById('regisztracio');
 const clearRegister = document.getElementById('clear-regisztracio');
 const deleteHirdetes = document.querySelectorAll('.delete-hirdetes');
+const filterFelhasznalo = document.getElementById('kereses');
 
 if (clearButton) {
   clearButton.addEventListener('click', clearIndex);
@@ -300,3 +301,13 @@ deleteHirdetes.forEach((deleteHirdet) => {
       });
   });
 });
+if (filterFelhasznalo) {
+  filterFelhasznalo.addEventListener('input', (e) => {
+    const filter = e.target.value.toUpperCase();
+    const rows = document.querySelector('.tableUsers').querySelectorAll('tr');
+    rows.forEach((row) => {
+      const name = row.cells[3].innerText.toUpperCase();
+      row.style.display = name.includes(filter) ? '' : 'none';
+    });
+  });
+}

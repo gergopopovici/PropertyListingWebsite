@@ -1,0 +1,21 @@
+<body>
+  <nav>
+    <img id='logo' class='logo' src='/houseicon.png' alt='logo' />
+    <a href='/index'>Főoldal</a>
+    {{> login}}
+  </nav>
+  <div id='felhasznalokUzenetDiv'>
+    <form id='uzenetekForm' action='/post/submit_message' method='POST'>
+      <select id='felhasznaloValaszto'>
+        <option value=''>Válasszon felhasználót</option>
+        {{#each felhasznalok}}
+          <option value='{{this.FelhasznaloID}}'>{{this.FelhasznaloNev}}</option>
+        {{/each}}
+      </select>
+      <textarea id='uzenet' name='uzenet' placeholder='Írja be az üzenetet'></textarea>
+      <button type='submit' id='kuld'>Küldés</button>
+    </form>
+  </div>
+  <footer>Popovici Gergo-Benone<br />pgim2289<br />523<br /></footer>
+  <script src='script.js'></script>
+</body>

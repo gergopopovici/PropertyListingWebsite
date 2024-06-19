@@ -55,7 +55,7 @@ router.post('/submitlogin_form', express.urlencoded({ extended: true }), validat
     return res.status(401).render('bejelentkezes', { message: 'Hibás jelszó' });
   }
   const token = jwt.sign({ felhasznalo: { Nev: req.body.felhasznalonev } }, secret, {
-    expiresIn: '10m',
+    expiresIn: '60m',
   });
   res.cookie('loginToken', token, { httpOnly: true });
   return res.redirect('/index');

@@ -55,6 +55,19 @@ await pool.query(
 );`,
 );
 await pool.query(
+  `IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='Uzenetek' and xtype='U')
+    CREATE TABLE Uzenetek(
+      UzenetID INT PRIMARY KEY IDENTITY(1,1),
+      FeladoID INT,
+      CimzettID INT,
+      Uzenet NVARCHAR(MAX),
+      Datum DATE,
+      Olvasva BIT,
+      FOREIGN KEY (FeladoID) REFERENCES Felhasznalo(FelhasznaloID),
+      FOREIGN KEY (CimzettID) REFERENCES Felhasznalo(FelhasznaloID)
+    )`,
+);
+await pool.query(
   `IF NOT EXISTS (SELECT * FROM Csoport)
   BEGIN
     INSERT INTO Csoport (CsoportNev) VALUES ('Admin');

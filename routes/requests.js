@@ -81,4 +81,9 @@ router.get('/adminisztralas', checkAuth, verifyToken, checkAdmin, async (req, re
     felhasznalok: felhasznalokModositottCsoportID,
   });
 });
+router.get('/uzenetek', checkAuth, verifyToken, async (req, res) => {
+  let felhasznalok = await db.getFelhasznalok();
+  felhasznalok = felhasznalok.filter((felhasznalo) => felhasznalo.FelhasznaloNev !== req.felhasznalo.Nev);
+  res.render('uzenetek', { title: 'Üzenetek', felhasznalo: req.felhasznalo, felhasznalok });
+});
 export default router;

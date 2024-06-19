@@ -39,6 +39,14 @@ function checkFormUzenet() {
   }
   return true;
 }
+function checkUzenetMegtekint() {
+  const felhasznalo = document.getElementById('felhasznaloValaszto2').value;
+  if (felhasznalo === '') {
+    alert('Válasszon felhaszálót!');
+    return false;
+  }
+  return true;
+}
 function checkFormLogin() {
   const felhasznalonev = document.getElementById('felhasznalonev').value;
   const jelszo = document.getElementById('jelszo').value;
@@ -190,6 +198,7 @@ const clearRegister = document.getElementById('clear-regisztracio');
 const deleteHirdetes = document.querySelectorAll('.delete-hirdetes');
 const filterFelhasznalo = document.getElementById('kereses');
 const uzenetKuldes = document.getElementById('uzenetkuld');
+const uzenetTekint = document.getElementById('uzenetekMegtekint');
 if (clearButton) {
   clearButton.addEventListener('click', clearIndex);
   sorElements.forEach((sorElement) => {
@@ -281,6 +290,13 @@ if (clearRegister) {
 if (uzenetKuldes) {
   uzenetKuldes.addEventListener('click', (event) => {
     if (!checkFormUzenet()) {
+      event.preventDefault();
+    }
+  });
+}
+if (uzenetTekint) {
+  uzenetTekint.addEventListener('click', (event) => {
+    if (!checkUzenetMegtekint()) {
       event.preventDefault();
     }
   });

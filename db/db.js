@@ -179,7 +179,7 @@ export const getFelhasznaloEmail = async (email) => {
   return 'recordset' in result ? result.recordset : [];
 };
 export const getLogindData = async (req) => {
-  const query = 'SELECT * FROM Felhasznalo WHERE FelhasznaloNev = @FelhasznaloNev';
+  const query = 'SELECT * FROM Felhasznalo WHERE FelhasznaloNev COLLATE SQL_Latin1_General_CP1_CS_AS = @FelhasznaloNev';
   const result = await pool.request().input('FelhasznaloNev', req.body.felhasznalonev).query(query);
   return 'recordset' in result ? result.recordset : [];
 };
@@ -235,4 +235,21 @@ export const uzenetBeszuras = (feladoID, cimzettID, uzenet) => {
     .input('Olvasva', 0)
     .query(query)
     .then(() => 1);
+};
+export const uzenetekfogadasa = async (felhasznaloID) => {
+  const query =
+    'SELECT DISTINCT FeladoID AS ID FROM Uzenetek WHERE CimzettID = @FelhasznaloID  UNION SELECT DISTINCT CimzettID AS ID FROM Uzenetek WHERE FeladoID = @FelhasznaloID';
+  const result = await pool.request().input('FelhasznaloID', felhasznaloID).query(query);
+  return 'recordset' in result ? result.recordset : [];
+};
+export const getFelhasznalobyID = async (id) => {
+  const query = 'SELECT FelhasznaloID, FelhasznaloNev FROM Felhasznalo WHERE FelhasznaloID = @FelhasznaloID';
+  const result = await pool.request().input('FelhasznaloID', id).query(query);
+  return 'recordset' in result ? result.recordset : [];
+};
+export const getUzenetek = async (feladoID, cimzettID) => {
+  const query =
+    'SELECT * FROM Uzenetek WHERE (FeladoID = @FeladoID AND CimzettID = @CimzettID) OR (FeladoID = @CimzettID AND CimzettID = @FeladoID)';
+  const result = await pool.request().input('FeladoID', feladoID).input('CimzettID', cimzettID).query(query);
+  return 'recordset' in result ? result.recordset : [];
 };

@@ -160,33 +160,70 @@ router.post(
   async (req, res) => {
     let felhasznalok = await db.getFelhasznalok();
     felhasznalok = felhasznalok.filter((felhasznalo) => felhasznalo.FelhasznaloNev !== req.felhasznalo.Nev);
+    const felhasznaloID = (await db.getFelhasznaloID(req.felhasznalo.Nev))[0].FelhasznaloID;
+    const felhasznalok2 = await db.uzenetekfogadasa(felhasznaloID);
+    const felhasznalok3 = await Promise.all(
+      felhasznalok2.map(async (felhasznalo) => {
+        const result = await db.getFelhasznalobyID(felhasznalo.ID);
+        return result[0];
+      }),
+    );
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(500).render('uzenetek', {
         felhasznalo: req.felhasznalo,
         felhasznalok,
         message: 'Hiba a validalas soran!',
+        felhasznalok2: felhasznalok3,
       });
     }
     const feladoNev = req.body.felhasznaloNev;
     const feladoID = (await db.getFelhasznaloID(feladoNev))[0].FelhasznaloID;
     if (feladoID.length === 0) {
-      return res
-        .status(500)
-        .render('uzenetek', { felhasznalo: req.felhasznalo, felhasznalok, message: 'Nem található felhasználó' });
+      return res.status(500).render('uzenetek', {
+        felhasznalo: req.felhasznalo,
+        felhasznalok,
+        message: 'Nem található felhasználó',
+        felhasznalok2: felhasznalok3,
+      });
     }
     const { felhasznaloValaszto } = req.body;
     let { uzenet } = req.body;
     uzenet = `${req.felhasznalo.Nev}: ${uzenet}`;
     const beszurt = await db.uzenetBeszuras(feladoID, felhasznaloValaszto, uzenet);
     if (beszurt === 1) {
-      return res
-        .status(200)
-        .render('uzenetek', { felhasznalo: req.felhasznalo, felhasznalok, message: 'Az üzenet el lett küldve!' });
+      return res.status(200).render('uzenetek', {
+        felhasznalo: req.felhasznalo,
+        felhasznalok,
+        message: 'Az üzenet el lett küldve!',
+        felhasznalok2: felhasznalok3,
+      });
     }
-    return res
-      .status(500)
-      .render('uzenetek', { felhasznalo: req.felhasznalo, felhasznalok, message: 'Az üzenet nem lett küldve!' });
+    return res.status(500).render('uzenetek', {
+      felhasznalo: req.felhasznalo,
+      felhasznalok,
+      message: 'Az üzenet nem lett küldve!',
+      felhasznalok2: felhasznalok3,
+    });
+  },
+);
+router.post(
+  '/view_messages/',
+  express.urlencoded({ extended: true }),
+  checkAuth,
+  verifyToken,
+  [check('felhasznaloValaszto2').isInt().withMessage('A címzett nem található')],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(500).render('uzenetek', { felhasznalo: req.felhasznalo, message: 'Hiba a validalas soran!' });
+    }
+    const felhasznaloID = (await db.getFelhasznaloID(req.felhasznalo.Nev))[0].FelhasznaloID;
+    const uzenetek = await db.getUzenetek(felhasznaloID, req.body.felhasznaloValaszto2);
+    if (uzenetek.length > 0) {
+      return res.render('uzenetekmegtekintes', { felhasznalo: req.felhasznalo, uzenetek });
+    }
+    return res.render('uzenetek');
   },
 );
 export default router;

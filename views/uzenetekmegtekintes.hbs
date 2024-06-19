@@ -1,0 +1,14 @@
+<body>
+  <nav>
+    <img id='logo' class='logo' src='/houseicon.png' alt='logo' />
+    <a href='/index'>Főoldal</a>
+    {{> login}}
+  </nav>
+  {{#each uzenetek}}
+    <div class='uzenet'>
+      <p class='uzenetTartalom'>{{this.Uzenet}}</p>
+    </div>
+  {{/each}}
+  <footer>Popovici Gergo-Benone<br>pgim2289<br>523<br></footer>
+  <script src='script.js'></script>
+</body>

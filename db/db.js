@@ -253,3 +253,18 @@ export const getUzenetek = async (feladoID, cimzettID) => {
   const result = await pool.request().input('FeladoID', feladoID).input('CimzettID', cimzettID).query(query);
   return 'recordset' in result ? result.recordset : [];
 };
+export const olvasottUzenet = async (cimzetId, feladoId) => {
+  const query = 'UPDATE Uzenetek SET Olvasva = 1 WHERE CimzettID = @CimzettID AND FeladoID = @FeladoID';
+  const result = await pool.request().input('CimzettID', cimzetId).input('FeladoID', feladoId).query(query);
+  return result.rowsAffected[0] > 0;
+};
+export const getOlvasatlanUzenetek = async (cimzettID) => {
+  const query = `
+  SELECT DISTINCT Felhasznalo.FelhasznaloNev 
+  FROM Uzenetek 
+  JOIN Felhasznalo ON Uzenetek.FeladoID = Felhasznalo.FelhasznaloID
+  WHERE Uzenetek.CimzettID = @CimzettID AND Uzenetek.Olvasva = 0
+`;
+  const result = await pool.request().input('CimzettID', cimzettID).query(query);
+  return 'recordset' in result ? result.recordset : [];
+};

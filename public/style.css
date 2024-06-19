@@ -91,3 +91,8 @@ td {
 #uzenetekForm > * {
   margin-bottom: 15px;
 }
+footer {
+  background-color: #f5deb3;
+  padding: 10px;
+  border-radius: 10px;
+}

@@ -85,19 +85,20 @@ router.get('/uzenetek', checkAuth, verifyToken, async (req, res) => {
   let felhasznalok = await db.getFelhasznalok();
   const felhasznaloID = (await db.getFelhasznaloID(req.felhasznalo.Nev))[0].FelhasznaloID;
   const felhasznalok2 = await db.uzenetekfogadasa(felhasznaloID);
+  const olvasatlan = await db.getOlvasatlanUzenetek(felhasznaloID);
   const felhasznalok3 = await Promise.all(
     felhasznalok2.map(async (felhasznalo) => {
       const result = await db.getFelhasznalobyID(felhasznalo.ID);
       return result[0];
     }),
   );
-  console.log(felhasznalok3);
   felhasznalok = felhasznalok.filter((felhasznalo) => felhasznalo.FelhasznaloNev !== req.felhasznalo.Nev);
   res.render('uzenetek', {
     title: 'Üzenetek',
     felhasznalo: req.felhasznalo,
     felhasznalok,
     felhasznalok2: felhasznalok3,
+    olvasatlan,
   });
 });
 export default router;

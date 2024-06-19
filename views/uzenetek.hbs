@@ -19,6 +19,9 @@
     <p>{{message}}</p>
   </div>
   <div id='uzenetekDiv'>
+    {{#each olvasatlan}}
+      <p>Olvasatlan üzenetek:{{this.FelhasznaloNev}}</p>
+    {{/each}}
     <form id="uzenetTekinto" action="/post/view_messages" method="POST">
      <input type="hidden"  id="felhasznaloNev" name="felhasznaloNev" value="{{felhasznalo.Nev}}">
      <select id='felhasznaloValaszto2' name = 'felhasznaloValaszto2'>

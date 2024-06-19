@@ -220,8 +220,11 @@ router.post(
     }
     const felhasznaloID = (await db.getFelhasznaloID(req.felhasznalo.Nev))[0].FelhasznaloID;
     const uzenetek = await db.getUzenetek(felhasznaloID, req.body.felhasznaloValaszto2);
-    if (uzenetek.length > 0) {
-      return res.render('uzenetekmegtekintes', { felhasznalo: req.felhasznalo, uzenetek });
+    const olvasva = await db.olvasottUzenet(felhasznaloID, req.body.felhasznaloValaszto2);
+    if (olvasva === true || olvasva === false) {
+      if (uzenetek.length > 0) {
+        return res.render('uzenetekmegtekintes', { felhasznalo: req.felhasznalo, uzenetek });
+      }
     }
     return res.render('uzenetek');
   },

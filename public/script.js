@@ -96,7 +96,7 @@ function checkFormHirdet() {
     return false;
   }
   if (/[^a-zA-Z-]/.test(varos)) {
-    alert('A város neve nem lehet szám!');
+    alert('A város neve nem tartalmazhat szóközt vagy számot!');
     return false;
   }
 
@@ -196,6 +196,7 @@ const submitLogin = document.getElementById('bejelentkezes');
 const submitRegister = document.getElementById('regisztracio');
 const clearRegister = document.getElementById('clear-regisztracio');
 const deleteHirdetes = document.querySelectorAll('.delete-hirdetes');
+const deleteHirdetesUser = document.querySelector('.hirdetesTorleseFelhasznalo');
 const filterFelhasznalo = document.getElementById('kereses');
 const uzenetKuldes = document.getElementById('uzenetkuld');
 const uzenetTekint = document.getElementById('uzenetekMegtekint');
@@ -349,3 +350,22 @@ if (filterFelhasznalo) {
 document.getElementById('logo').addEventListener('click', () => {
   window.location.href = '/';
 });
+if (deleteHirdetesUser) {
+  deleteHirdetesUser.addEventListener('click', (event) => {
+    const id = event.currentTarget.getAttribute('hirdetesFelhasznalo-id');
+    fetch(`/post/hirdetesUserDelete/${id}`, { method: 'DELETE' })
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error('Hiba történt a kérés során');
+        }
+        return res;
+      })
+      .then(() => {
+        window.location.href = '/';
+      })
+      .catch((err) => {
+        console.error(err);
+        alert('hiba történt a kérés során');
+      });
+  });
+}

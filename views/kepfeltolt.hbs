@@ -2,6 +2,7 @@
     <nav>
       <img id="logo" class="logo" src="/houseicon.png" alt="logo">
       {{> login}}
+      <a href="/index">Főoldal</a>
     </nav>
     <div id='nagy-div'>
       {{#each hirdetes}}
@@ -28,6 +29,7 @@
     {{#if tulaj}}
         <div class='kepfeltolt'>
           {{#each hirdetes}}
+            <button type='button' class='hirdetesTorleseFelhasznalo' hirdetesFelhasznalo-id="{{this.HirdetesID}}">Hírdetés Törlése</button>
             <form action='/post/submitpic_form' method='POST' enctype='multipart/form-data'>
               <input type='hidden' id='adId' name='adId' value='{{this.HirdetesID}}' />
               <label for='kep'>Kép:</label>

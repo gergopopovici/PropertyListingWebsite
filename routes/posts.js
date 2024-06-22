@@ -229,4 +229,28 @@ router.post(
     return res.render('uzenetek');
   },
 );
+router.delete('/hirdetesUserDelete/:id', verifyToken, checkOwner, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const kepek = await db.getPic(id);
+    if (kepek.length > 0) {
+      kepek.forEach((kep) => {
+        const toroltKep = db.deletePic(kep.FenykepID);
+        if (!toroltKep) {
+          return res.status(500).json({ message: 'A kép törlése nem sikerült' });
+        }
+        fs.unlinkSync(path.join(uploadDir, kep.Fajlnev));
+        return 2;
+      });
+    }
+    const torolt = await db.deleteHirdetes(id);
+    if (torolt) {
+      return res.status(200).end();
+    }
+    return res.status(500).json({ message: 'A hirdetés törlése nem sikerült' });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: 'Szerverhiba' });
+  }
+});
 export default router;

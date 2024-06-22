@@ -45,7 +45,7 @@ router.post('/submitlogin_form', express.urlencoded({ extended: true }), validat
   }
   const felhasznalo = await db.getLogindData(req);
   if (felhasznalo.length === 0) {
-    return res.status(401).render('bejelentkezes', { messsage: 'Nem található ilyen felhasználó' });
+    return res.status(401).render('bejelentkezes', { message: 'Nem található ilyen felhasználó' });
   }
   const jelszoHash = felhasznalo[0].Jelszo;
   const so = felhasznalo[0].Salt;

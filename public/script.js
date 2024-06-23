@@ -319,6 +319,7 @@ document.querySelectorAll('.admin-checkbox').forEach((checkbox) => {
     if (!res.ok) {
       alert('Hiba történt az adminisztrálás során során');
     }
+    window.location.reload();
   });
 });
 deleteHirdetes.forEach((deleteHirdet) => {

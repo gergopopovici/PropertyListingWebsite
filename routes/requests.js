@@ -25,7 +25,7 @@ router.get(['/', '/index'], verifyToken, async (req, res) => {
   }
   return res.render('index', { title: 'index', hirdetesek, felhasznalo: req.felhasznalo });
 });
-router.get(['/hirdetes'], checkAuth, verifyToken, (req, res) =>
+router.get(['/hirdetes'], verifyToken, checkAuth, (req, res) =>
   res.render('hirdetes', { title: 'hirdetés', felhasznalo: req.felhasznalo }),
 );
 router.get('/tovabb', verifyToken, async (req, res) => {
@@ -65,7 +65,7 @@ router.get('/logout', (req, res) => {
   res.cookie('loginToken', '', { expires: new Date(0) });
   res.redirect('/index');
 });
-router.get('/adminisztralas', checkAuth, verifyToken, checkAdmin, async (req, res) => {
+router.get('/adminisztralas', verifyToken, checkAuth, checkAdmin, async (req, res) => {
   const felhasznalok = await db.getFelhasznalok();
   const felhasznalokModositottCsoportID = felhasznalok.map((felhasznalo) => {
     if (felhasznalo.CsoportID === 1) {
@@ -81,7 +81,7 @@ router.get('/adminisztralas', checkAuth, verifyToken, checkAdmin, async (req, re
     felhasznalok: felhasznalokModositottCsoportID,
   });
 });
-router.get('/uzenetek', checkAuth, verifyToken, async (req, res) => {
+router.get('/uzenetek', verifyToken, checkAuth, async (req, res) => {
   let felhasznalok = await db.getFelhasznalok();
   const felhasznaloID = (await db.getFelhasznaloID(req.felhasznalo.Nev))[0].FelhasznaloID;
   const felhasznalok2 = await db.uzenetekfogadasa(felhasznaloID);

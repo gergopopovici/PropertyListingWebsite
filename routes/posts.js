@@ -26,8 +26,8 @@ app.use('/uploads', express.static(uploadDir));
 const upload = multer({ dest: uploadDir, limits: { fileSize: 5000000 } });
 router.post(
   '/submitannouncement_form',
-  checkAuth,
   verifyToken,
+  checkAuth,
   express.urlencoded({ extended: true }),
   [
     check('varos').isString().isLength({ min: 4 }).withMessage('Város megadása kötelező!'),
@@ -150,8 +150,8 @@ router.delete('/hirdetesek/:id', verifyToken, checkAdmin, async (req, res) => {
 });
 router.post(
   '/submit_message/',
-  checkAuth,
   verifyToken,
+  checkAuth,
   express.urlencoded({ extended: true }),
   [
     check('uzenet').isString().isLength({ min: 1 }).withMessage('Az üzenet nem lehet üres'),
@@ -210,8 +210,8 @@ router.post(
 router.post(
   '/view_messages/',
   express.urlencoded({ extended: true }),
-  checkAuth,
   verifyToken,
+  checkAuth,
   [check('felhasznaloValaszto2').isInt().withMessage('A címzett nem található')],
   async (req, res) => {
     const errors = validationResult(req);

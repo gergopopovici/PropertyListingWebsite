@@ -192,12 +192,7 @@ router.post(
     uzenet = `${req.felhasznalo.Nev}: ${uzenet}`;
     const beszurt = await db.uzenetBeszuras(feladoID, felhasznaloValaszto, uzenet);
     if (beszurt === 1) {
-      return res.status(200).render('uzenetek', {
-        felhasznalo: req.felhasznalo,
-        felhasznalok,
-        message: 'Az üzenet el lett küldve!',
-        felhasznalok2: felhasznalok3,
-      });
+      return res.redirect('/uzenetek');
     }
     return res.status(500).render('uzenetek', {
       felhasznalo: req.felhasznalo,

@@ -40,7 +40,7 @@ router.post(
   async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(500).render('hirdetes', {
+      return res.status(403).render('hirdetes', {
         felhasznalo: req.felhasznalo,
         message: `Hiba történt a validálás során${errors.array()}`,
       });
@@ -48,7 +48,7 @@ router.post(
     const felhasznaloNev = req.body.username;
     const felhasznaloID = (await db.getFelhasznaloID(felhasznaloNev))[0].FelhasznaloID;
     if (felhasznaloID.length === 0) {
-      return res.status(500).render('hirdetes', { felhasznalo: req.felhasznalo, message: 'Nem található felhasználó' });
+      return res.status(404).render('hirdetes', { felhasznalo: req.felhasznalo, message: 'Nem található felhasználó' });
     }
     const beszurt = await db.insertHirdetes(
       felhasznaloID,
@@ -170,7 +170,7 @@ router.post(
     );
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(500).render('uzenetek', {
+      return res.status(400).render('uzenetek', {
         felhasznalo: req.felhasznalo,
         felhasznalok,
         message: 'Hiba a validalas soran!',
@@ -180,7 +180,7 @@ router.post(
     const feladoNev = req.body.felhasznaloNev;
     const feladoID = (await db.getFelhasznaloID(feladoNev))[0].FelhasznaloID;
     if (feladoID.length === 0) {
-      return res.status(500).render('uzenetek', {
+      return res.status(404).render('uzenetek', {
         felhasznalo: req.felhasznalo,
         felhasznalok,
         message: 'Nem található felhasználó',
@@ -216,7 +216,7 @@ router.post(
   async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(500).render('uzenetek', { felhasznalo: req.felhasznalo, message: 'Hiba a validalas soran!' });
+      return res.status(404).render('uzenetek', { felhasznalo: req.felhasznalo, message: 'Hiba a validalas soran!' });
     }
     const felhasznaloID = (await db.getFelhasznaloID(req.felhasznalo.Nev))[0].FelhasznaloID;
     const uzenetek = await db.getUzenetek(felhasznaloID, req.body.felhasznaloValaszto2);

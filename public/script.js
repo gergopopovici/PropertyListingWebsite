@@ -200,6 +200,9 @@ const deleteHirdetesUser = document.querySelector('.hirdetesTorleseFelhasznalo')
 const filterFelhasznalo = document.getElementById('kereses');
 const uzenetKuldes = document.getElementById('uzenetkuld');
 const uzenetTekint = document.getElementById('uzenetekMegtekint');
+document.getElementById('logo').addEventListener('click', () => {
+  window.location.href = '/';
+});
 if (clearButton) {
   clearButton.addEventListener('click', clearIndex);
   sorElements.forEach((sorElement) => {
@@ -347,9 +350,6 @@ if (filterFelhasznalo) {
     });
   });
 }
-document.getElementById('logo').addEventListener('click', () => {
-  window.location.href = '/';
-});
 if (deleteHirdetesUser) {
   deleteHirdetesUser.addEventListener('click', (event) => {
     const id = event.currentTarget.getAttribute('hirdetesFelhasznalo-id');

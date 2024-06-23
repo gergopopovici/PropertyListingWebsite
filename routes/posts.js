@@ -7,8 +7,8 @@ import * as db from '../db/db.js';
 import verifyToken from '../middleware/verifyToken.js';
 import checkOwner from '../middleware/checkOwner.js';
 import checkOwnerPic from '../middleware/checkOwnerPic.js';
-import checkAdmin from '../middleware/checkAdmin.js';
-import checkAuth from '../middleware/checkAuth.js';
+import checkAdmin from '../middleware/checkadm.js';
+import checkAuth from '../middleware/checkaut.js';
 
 const app = express();
 app.use(express.json());

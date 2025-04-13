@@ -145,3 +145,5 @@ dist
 
 uploadDir
 node_modules
+
+.scannerwork

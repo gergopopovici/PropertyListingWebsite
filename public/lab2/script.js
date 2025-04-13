@@ -11,8 +11,6 @@ const feladatok = [];
 const eredmenyek = [];
 const vonalak = [];
 const helyesVonalak = [];
-const kivalasztottTeglalapokBal = [];
-const kivalasztottTeglalapokJobb = [];
 const befejezettTeglalapokBal = [];
 const befejezettTeglalapokJobb = [];
 
@@ -20,7 +18,6 @@ function clickBal(teglalap) {
   if (befejezettTeglalapokBal.includes(teglalap)) {
     return -1;
   }
-  kivalasztottTeglalapokBal.push(teglalap);
   return 1;
 }
 
@@ -28,7 +25,6 @@ function clickJobb(teglalap) {
   if (befejezettTeglalapokJobb.includes(teglalap)) {
     return -1;
   }
-  kivalasztottTeglalapokJobb.push(teglalap);
   return 1;
 }
 
@@ -37,22 +33,23 @@ function feladatokGeneralasa(muveletek) {
     const randomMuvelet = Math.random() * muveletek.length;
     const szam1 = Math.floor(Math.random() * 100);
     const szam2 = Math.floor(Math.random() * 100);
-    feladatok.push(`${szam1} ${muveletek[Math.floor(randomMuvelet)]} ${szam2}`);
-    if (muveletek[Math.floor(randomMuvelet)] === '+') {
-      eredmenyek.push(`${szam1 + szam2}`);
-      randomEredmenyek.push(`${szam1 + szam2}`);
-    } else if (muveletek[Math.floor(randomMuvelet)] === '-') {
-      eredmenyek.push(`${szam1 - szam2}`);
-      randomEredmenyek.push(`${szam1 - szam2}`);
-    } else if (muveletek[Math.floor(randomMuvelet)] === '*') {
-      eredmenyek.push(`${szam1 * szam2}`);
-      randomEredmenyek.push(`${szam1 * szam2}`);
-    } else if (muveletek[Math.floor(randomMuvelet)] === '/') {
-      eredmenyek.push(`${szam1 / szam2}`);
-      randomEredmenyek.push(`${szam1 / szam2}`);
+    const muvelet = muveletek[Math.floor(randomMuvelet)];
+    feladatok.push(`${szam1} ${muvelet} ${szam2}`);
+    let eredmeny;
+    if (muvelet === '+') {
+      eredmeny = szam1 + szam2;
+    } else if (muvelet === '-') {
+      eredmeny = szam1 - szam2;
+    } else if (muvelet === '*') {
+      eredmeny = szam1 * szam2;
+    } else if (muvelet === '/') {
+      eredmeny = szam1 / szam2;
     }
+    eredmenyek.push(`${eredmeny}`);
+    randomEredmenyek.push(`${eredmeny}`);
   }
 }
+
 function feladatokRajzolas() {
   const canvas = nagyCanvas.getContext('2d');
   canvas.clearRect(0, 0, balCanvasMeret, magassagCanvas);
@@ -66,15 +63,16 @@ function feladatokRajzolas() {
     canvas.fillText(feladatok[i], x + 10, y + 20);
   }
 }
+
 function keveres() {
   let index = randomEredmenyek.length;
-
   while (index !== 0) {
     const randomIndex = Math.floor(Math.random() * index);
     index--;
     [randomEredmenyek[index], randomEredmenyek[randomIndex]] = [randomEredmenyek[randomIndex], randomEredmenyek[index]];
   }
 }
+
 function megoldasokRajzolas() {
   const canvas = nagyCanvas.getContext('2d');
   canvas.clearRect(balCanvasMeret, 0, jobbCanvasMeret, magassagCanvas);
@@ -91,6 +89,7 @@ function megoldasokRajzolas() {
     canvas.fillText(randomEredmenyek[i], x + 10, y + 20);
   }
 }
+
 function FeladatValasztas(event) {
   if (
     event.offsetX < balCanvasMeret &&
@@ -109,6 +108,7 @@ function FeladatValasztas(event) {
     kivalasztottTeglalap = kivalasztott;
   }
 }
+
 function MegoldasValasztas(event) {
   if (
     event.offsetX >= balCanvasMeret &&
@@ -124,9 +124,7 @@ function MegoldasValasztas(event) {
       const y2 = event.offsetY;
       vonalak.push({ x1, y1, x2, y2 });
       befejezettTeglalapokBal.push(kivalasztottTeglalap);
-      console.log(kivalasztottTeglalap);
       befejezettTeglalapokJobb.push(Math.floor(event.offsetY / 50));
-      console.log(befejezettTeglalapokBal);
       if (randomEredmenyek[Math.floor(y2 / 50)] === eredmenyek[kivalasztottTeglalap]) {
         helyesVonalak.push({ x1, y1, x2, y2 });
       }
@@ -142,7 +140,6 @@ function MegoldasValasztas(event) {
       });
     }
     if (vonalak.length === parseInt(form.kerdesek.value, 10)) {
-      console.log('Minden parositas megtortent.');
       nagyCanvas.removeEventListener('click', FeladatValasztas);
       nagyCanvas.removeEventListener('click', MegoldasValasztas);
       helyesVonalak.forEach((vonal) => {
@@ -155,7 +152,7 @@ function MegoldasValasztas(event) {
       });
       canvas.fillStyle = 'red';
       canvas.font = '30px Times New Roman';
-      canvas.fillText('Jatek Vege!!', 300, 300);
+      canvas.fillText('Játék Vége!!', 300, 300);
     }
   }
 }
@@ -218,10 +215,9 @@ function jatek(event) {
     helyesVonalak.length = 0;
     kivalasztottTeglalap = null;
     jatekIndult = false;
-    kivalasztottTeglalapokBal.length = 0;
-    kivalasztottTeglalapokJobb.length = 0;
     befejezettTeglalapokBal.length = 0;
     befejezettTeglalapokJobb.length = 0;
   }
 }
+
 startButton.addEventListener('click', jatek);

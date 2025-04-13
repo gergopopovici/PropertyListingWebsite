@@ -63,7 +63,7 @@ function checkFormLogin() {
 function checkFormKep() {
   const adId = document.getElementById('adId').value;
   const image = document.getElementById('kep').value;
-  if (/[^0-9]/.test(adId)) {
+  if (/\D/.test(adId)) {
     alert('Az azonosító csak szám lehet!');
     return false;
   }
@@ -108,7 +108,7 @@ function checkFormHirdet() {
     alert('A felszínterület nem lehet kevesebb mint 10m^2!');
     return false;
   }
-  if (/[^0-9]/.test(felszinterulet)) {
+  if (/\D/.test(felszinterulet)) {
     alert('A felszínterület csak szám lehet!');
     return false;
   }
@@ -116,7 +116,7 @@ function checkFormHirdet() {
     alert('Az ár nem lehet negatív szám!');
     return false;
   }
-  if (/[^0-9]/.test(ar)) {
+  if (/\D/.test(ar)) {
     alert('Az ár csak szám lehet!');
     return false;
   }
@@ -124,7 +124,7 @@ function checkFormHirdet() {
     alert('A szobák száma nem lehet negatív szám!');
     return false;
   }
-  if (/[^0-9]/.test(szobak)) {
+  if (/\D/.test(szobak)) {
     alert('A szobák száma csak szám lehet!');
     return false;
   }
@@ -170,203 +170,4 @@ function checkFormRegister() {
     return false;
   }
   return true;
-}
-
-function moreInfo(data, moreInformation) {
-  while (moreInformation.firstChild) {
-    moreInformation.removeChild(moreInformation.firstChild);
-  }
-  const szobak = document.createElement('p');
-  szobak.textContent = `Szobák száma: ${data.Szobak}`;
-  moreInformation.appendChild(szobak);
-  const datum = document.createElement('p');
-  datum.textContent = `Hirdetés dátuma: ${data.Datum}`;
-  moreInformation.appendChild(datum);
-}
-
-const clearButton = document.getElementById('clear');
-const clearKepButton = document.getElementById('clear-kep');
-const clearHirdetButton = document.getElementById('clear-hirdet');
-const submitButtonKep = document.getElementById('feltolt');
-const submitButtonHirdet = document.getElementById('hirdet');
-const sorElements = document.querySelectorAll('.sor');
-const deleteKepElements = document.querySelectorAll('.delete-kep');
-const deleteLogin = document.getElementById('clear-bejelentkezes');
-const submitLogin = document.getElementById('bejelentkezes');
-const submitRegister = document.getElementById('regisztracio');
-const clearRegister = document.getElementById('clear-regisztracio');
-const deleteHirdetes = document.querySelectorAll('.delete-hirdetes');
-const deleteHirdetesUser = document.querySelector('.hirdetesTorleseFelhasznalo');
-const filterFelhasznalo = document.getElementById('kereses');
-const uzenetKuldes = document.getElementById('uzenetkuld');
-const uzenetTekint = document.getElementById('uzenetekMegtekint');
-document.getElementById('logo').addEventListener('click', () => {
-  window.location.href = '/';
-});
-if (clearButton) {
-  clearButton.addEventListener('click', clearIndex);
-  sorElements.forEach((sorElement) => {
-    sorElement.addEventListener('click', (event) => {
-      let { target } = event;
-      while (target != null && !target.classList.contains('hirdetes')) {
-        target = target.parentElement;
-      }
-      const id = target.getAttribute('hirdetes-id');
-      fetch(`/hirdetes/${id}`)
-        .then((res) => {
-          if (!res.ok) {
-            throw new Error('Hiba történt a kérés során');
-          }
-          return res.json();
-        })
-        .then((hirdetes) => {
-          const moreInformation = document.getElementById(id);
-          moreInfo(hirdetes[0], moreInformation);
-        })
-        .catch((err) => {
-          console.error(err);
-          alert('Hiba történt a kérés során');
-        });
-    });
-  });
-}
-if (clearKepButton) {
-  clearKepButton.addEventListener('click', clearKep);
-  deleteKepElements.forEach((deleteKepElement) => {
-    deleteKepElement.addEventListener('click', (event) => {
-      const id = event.target.getAttribute('kep-id');
-      fetch(`/post/kep/${id}`, { method: 'DELETE' })
-        .then((res) => {
-          if (!res.ok) {
-            throw new Error('Hiba történt a kérés során');
-          }
-          return res;
-        })
-        .then(() => {
-          event.target.parentElement.remove();
-        })
-        .catch((err) => {
-          console.error(err);
-          alert('hiba történt a kérés során');
-        });
-    });
-  });
-}
-if (clearHirdetButton) {
-  clearHirdetButton.addEventListener('click', clearHirdet);
-}
-if (submitButtonKep) {
-  submitButtonKep.addEventListener('click', (event) => {
-    if (!checkFormKep()) {
-      event.preventDefault();
-    }
-  });
-}
-
-if (submitButtonHirdet) {
-  submitButtonHirdet.addEventListener('click', (event) => {
-    if (!checkFormHirdet()) {
-      event.preventDefault();
-    }
-  });
-}
-if (deleteLogin) {
-  deleteLogin.addEventListener('click', clearLogin);
-}
-if (submitLogin) {
-  submitLogin.addEventListener('click', (event) => {
-    if (!checkFormLogin()) {
-      event.preventDefault();
-    }
-  });
-}
-
-if (submitRegister) {
-  submitRegister.addEventListener('click', (event) => {
-    if (!checkFormRegister()) {
-      event.preventDefault();
-    }
-  });
-}
-if (clearRegister) {
-  clearRegister.addEventListener('click', clearRegisterForm);
-}
-if (uzenetKuldes) {
-  uzenetKuldes.addEventListener('click', (event) => {
-    if (!checkFormUzenet()) {
-      event.preventDefault();
-    }
-  });
-}
-if (uzenetTekint) {
-  uzenetTekint.addEventListener('click', (event) => {
-    if (!checkUzenetMegtekint()) {
-      event.preventDefault();
-    }
-  });
-}
-document.querySelectorAll('.admin-checkbox').forEach((checkbox) => {
-  checkbox.addEventListener('change', async (event) => {
-    const felhasznaloID = event.target.getAttribute('adminCheckBoxID');
-    const csoportID = event.target.checked ? 1 : 2;
-    const res = await fetch('/post/updateAdmin', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ felhasznaloID, csoportID }),
-    });
-    if (!res.ok) {
-      alert('Hiba történt az adminisztrálás során során');
-    }
-    window.location.reload();
-  });
-});
-deleteHirdetes.forEach((deleteHirdet) => {
-  deleteHirdet.addEventListener('click', (event) => {
-    const id = event.target.getAttribute('hirdetes-id');
-    fetch(`/post/hirdetesek/${id}`, { method: 'DELETE' })
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error('Hiba történt a kérés során');
-        }
-        return res;
-      })
-      .then(() => {
-        event.target.parentElement.remove();
-      })
-      .catch((err) => {
-        console.error(err);
-        alert('hiba történt a kérés során');
-      });
-  });
-});
-if (filterFelhasznalo) {
-  filterFelhasznalo.addEventListener('input', (e) => {
-    const filter = e.target.value.toUpperCase();
-    const rows = document.querySelector('.tableUsers').querySelectorAll('tr');
-    rows.forEach((row) => {
-      const name = row.cells[3].innerText.toUpperCase();
-      row.style.display = name.includes(filter) ? '' : 'none';
-    });
-  });
-}
-if (deleteHirdetesUser) {
-  deleteHirdetesUser.addEventListener('click', (event) => {
-    const id = event.currentTarget.getAttribute('hirdetesFelhasznalo-id');
-    fetch(`/post/hirdetesUserDelete/${id}`, { method: 'DELETE' })
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error('Hiba történt a kérés során');
-        }
-        return res;
-      })
-      .then(() => {
-        window.location.href = '/';
-      })
-      .catch((err) => {
-        console.error(err);
-        alert('hiba történt a kérés során');
-      });
-  });
 }
